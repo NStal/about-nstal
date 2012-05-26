@@ -39,6 +39,7 @@
 	    this.toward = 0;
 	}
 	this.itemId = info.itemId;
+	if(info.life)this.life = info.life;
     }
     Ship.prototype.toData = function(){
 	var data ={
@@ -52,6 +53,7 @@
 	    ,action:this.action
 	    ,AI:this.AI.toData()
 	    ,itemId:this.itemId
+	    ,life:this.life
 	}
 	return data;
     }

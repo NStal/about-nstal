@@ -3,25 +3,25 @@
     var Items = {
 	"0":{
             name:"母船",
-            speed:20, 
-	    maxSpeed:0.8,
+            maxSpeed:0.8,
 	    maxRotateSpeed:0.02,
             maxLife:2000,
             life:2000,
             level:0,
 	    subType:"motherShip"
+	    
+	    ,coolDown:60
 	    ,size:50
 	    ,range:100
-	    ,attack:50
+	    ,attack:60
 	    ,src:"motherShip"
 	},
 	"1":{
             name:"矿船",
-            maxSpeed:5,
-	    maxRotateSpeed:0.2,
-            ability:20,
-            maxLife:100,
-            life:200,
+            maxSpeed:0.8,
+	    maxRotateSpeed:0.02,
+            maxLife:400,
+            life:400,
             level:0, 
 	    subType:"miningShip" 
 	    ,curveForwarding:true
@@ -39,9 +39,8 @@
             maxSpeed:2,
 	    maxRotateSpeed:0.05,
 	    coolDown:45,
-            attack:30,
-            maxLife:100,
-            life:100,
+            maxLife:200,
+            life:200,
             level:0,
 	    subType:"attackShip"
 	    ,size:20

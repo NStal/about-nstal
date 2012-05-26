@@ -21,6 +21,8 @@ Game.prototype._init = function(canvas){
 			        ,username:Static.username});
 	RunTest();
     })
+    Static.interactionManager = new InteractionManager();
+    
 }
 Game.prototype.next = function(){
     Game.parent.prototype.next.call(this);
@@ -31,6 +33,9 @@ Game.prototype.next = function(){
     Static.battleFieldDisplayer.next();
     Static.battleFieldDisplayer.draw(context);
     Static.selectRect.draw(context);
+    Static.shipController.next();
+    Static.shipController.onDraw(context);
+    Static.interactionManager.draw(context);
     this.solveKeyEvent();
     //console.log(Static.battleField.time);
 }

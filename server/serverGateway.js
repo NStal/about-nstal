@@ -75,8 +75,9 @@
 		    cmd:OperateEnum.SYNC
 		    ,data:Static.battleField.toData()
  		    ,time:Static.battleField.time
-		    ,team:team
-		    ,allTeam:Static.team
+		    ,team:team //your team
+		    ,teamInfo:Static.battleField.teamInfo
+		    ,allTeam:Static.team //2 teams
 		    ,ready:!notReady
 		})
 	    }else{

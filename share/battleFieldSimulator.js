@@ -14,6 +14,15 @@
 	this.size = Point.Point(10000,10000);
 	this.instructionQueue = []; 
 	this.time = 0;
+	this.initTeamInfo();
+    }
+    BattleFieldSimulator.prototype.initTeamInfo = function(){
+	this.teamInfo = {
+	    0:{
+		mine:0
+	    },1:{
+		mine:0
+	    }}
     }
     BattleFieldSimulator.prototype.toData = function(){
 	var ships = [];
@@ -176,7 +185,8 @@
 	    console.trace();
 	    return;
 	}
-	this.emit("gained",ship,mine,cmd.ammount);
+	this.teamInfo[ship.team].mine += cmd.ammount;
+	this.emit("gained",ship,mine,cmd.ammount); 
     }
     BattleFieldSimulator.prototype.shipMine = function(cmd){
 	var ship = this.getShipById(cmd.id);
@@ -265,6 +275,7 @@
 	this.emit("aboutReady");
     }
     BattleFieldSimulator.prototype.addMotherShip = function(){
+	this.initTeamInfo();
 	var m0 = {
 	    id:"0"
 	    ,itemId:"0"
@@ -283,6 +294,7 @@
 	this.emit("countDown",instruction.count);
 	if(instruction.count==0){
 	    this.addMotherShip();
+	    this.initTeamInfo();
 	} 
     } 
     BattleFieldSimulator.prototype.makeShip = function(instruction){
@@ -300,9 +312,13 @@
 	    id:instruction.id
 	    ,itemId:instruction.itemId
 	    ,cordinates:motherShip.cordinates
+	    ,team:team
 	}
 	var ship = this.initShip(info);
 	this.emit("shipBuilt",ship);
+    }
+    BattleFieldSimulator.prototype.end = function(instruction){
+	this.emit("end");
     }
     BattleFieldSimulator.prototype._excute = function(instruction){
 	switch(instruction.cmd){
@@ -335,6 +351,9 @@
 	    break;
 	case OperateEnum.MAKE_SHIP:
 	    this.makeShip(instruction);
+	    break;
+	case OperateEnum.END:
+	    this.end(instruction);
 	    break;
 	}
     }

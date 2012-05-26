@@ -1,197 +1,207 @@
 var ShipControler = Class.sub();
 ShipControler.prototype._init = function(canvas,bfs){
-    
-    canvas.addEventListener("mousemove",OnMouseMove,false);
-    canvas.addEventListener("mouseup",OnMouseUp,false);
+    var self = this;
+    canvas.addEventListener("mousemove",function(e){
+	self.onMouseMove(e);
+	self.isMove = true;
+    })
+    canvas.addEventListener("mouseup",function(e){
+	self.onMouseUp(e)
+    }); 
+    canvas.addEventListener("mousedown",function(e){
+	self.onMouseDown(e);
+    });
+    $(canvas).mouseleave(function(e){
+	self.onMouseUp(e);
+    })
     this.battleFieldSimulator = bfs;
     this.parts = this.battleFieldSimulator.parts;
-    canvas.addEventListener("mousedown",OnMouseDown,false);
+    Static.ships = [];
 }
-ShipControler.prototype.calcuDis = function(evt){
-    var minDistance = 100000;
-    var index = -1;
-    for(var i=0,length=this.parts.length;i < length;i++){
-	    var item = this.parts[i];
-        if(item.type == "ship")
-        {
-            var dx = evt.layerX - item.cordinates.x;
-            var dy = evt.layerY - item.cordinates.y;
-            var _dis = Math.abs(Math.sqrt(dx*dx+dy*dy));
-            if(_dis<minDistance){
-                minDistance = _dis;
-                index = i;
-            }
-
-        }
-	}
-    if(index != -1){
-        var ship = this.parts[index];
-        if(minDistance < ship.size*2) {
-            Static.isShipSelect = true;
-            ship.isSelected = true;
-            return ship;
-        }
+ShipControler.prototype.parseEvent = function(e){
+    return e;
+}
+ShipControler.prototype.addSelectShip = function(ship){
+    Static.ships.push(ship);
+    ship.isSelected = true;
+}
+ShipControler.prototype.onMouseUp = function(e){
+    this.onMouseMove(e);
+    this.mouseUpPoint = this.eventToPoint(e);
+    Static.leftButtonDown = false;
+    Static.rightButtonDown = false; 
+}
+ShipControler.prototype.onMouseMove = function(e){
+    if(Static.mousePosition){
+	Static.mousePosition.release();
     } 
-    return 0;
+    Static.mousePosition = this.eventToPoint(e)
 }
-
-ShipControler.prototype.getShips = function(evt){
-    for(var i=0,length=this.parts.length;i < length;i++){
-	    var item = this.parts[i];
-        if(item.type == "ship")
-        {
-            //console.log(item.cordinates.x+"|"+Static.firstPoint.x);
-            //console.log(item.cordinates.y+"|"+Static.firstPoint.y);
-            //console.log(evt.layerX+"|"+evt.layerY);
-           if((item.cordinates.x>Static.firstPoint.x && item.cordinates.x<evt.layerX && item.cordinates.y>Static.firstPoint.y && item.cordinates.y<evt.layerY) || (item.cordinates.x<Static.firstPoint.x && item.cordinates.x>evt.layerX && item.cordinates.y>Static.firstPoint.y && item.cordinates.y<evt.layerY) ){
-                console.log(item.name+"is in");
-                Static.isShipSelect = true;
-                item.isSelected = true;
-                Static.ships.push(item);
-            }   
-        }
-	}
-}
-
-ShipControler.prototype.getAction = function(evt){
-    var minDistance = 10000;
-    var index = -1;
-    for(var i=0,length=this.parts.length;i < length;i++){
-	    var item = this.parts[i];
-        var dx = evt.layerX - item.cordinates.x;
-        var dy = evt.layerY - item.cordinates.y;
-        var _dis = Math.abs(Math.sqrt(dx*dx+dy*dy));
-        if(_dis<minDistance){
-            minDistance = _dis;
-            index = i;
-        }
-	}
-    console.log("finish");
-    if(index != -1){
-        console.log(minDistance);
-        var item = this.parts[index];
-        console.log("X:"+item.cordinates.x+"|"+evt.layerX);
-        console.log("Y:"+item.cordinates.y+"|"+evt.layerY);
-        if(minDistance < item.size*2) {
-            if(item.type == "ship"){
-                if(item.team == "0"){
-                    return 1;
-                }else {
-                    Static.shipController.beingAttackId = item.id;
-                    return 2;
-                }
-            }else if(item.type == "mine"){
-                Static.shipController.beingMinedId = item.id;
-                return 3;
-            }
-        }
-    }
-    return 0;
-}
-function OnMouseDown(evt){
-    if(!Static.mousePosition){
-	Static.mousePosition = Point.Point(evt.layerX,evt.layerY);
-    }
-    else{
-	Static.mousePosition.x = evt.layerX;
-	Static.mousePosition.y = evt.layerY;
-    }
-    Static.firstPoint = new Point(evt.layerX,evt.layerY);
-    if(Static.shipController){
-        if(evt.button == 0){
-            Static.isLeftDown = true;
-            //console.log(evt.layerX+"|"+evt.layerY);
-            var ship = Static.shipController.calcuDis(evt);
-            if(ship){
-                console.log(evt.layerX+"|"+evt.layerY); 
-                //Static.ships = [];
-                emptySelectShips(Static.ships);
-                Static.ships.push(ship);
-            }else{
-                Static.isShipSelect = false;
-                //Static.ships = [];
-                emptySelectShips(Static.ships);
-            }
-        }else if(evt.button == 2 && Static.isShipSelect){
-                var type = Static.shipController.getAction(evt);
-                switch(type){
-                    case 0:
-                    for(var i =0;i<Static.ships.length;i++){
-                        Static.ships[i].moveTo(new Point(evt.layerX,evt.layerY)); 
-                    } 
-                    break;
-                    case 1:
-                    for(var i =0;i<Static.ships.length;i++){
-                        Static.ships[i].moveTo(new Point(evt.layerX,evt.layerY)); 
-                    }
-                    break;
-                    case 2:
-                    for(var i =0;i<Static.ships.length;i++){
-                        if(Static.ships[i].subType == "attackShip"){
-                            var cmd = ProtocalGenerater.attackTo(Static.ships[i].id,Static.shipController.beingAttackId);
-                            Static.gateway.send(cmd);
-                        }else{
-                            Static.ships[i].moveTo(new Point(evt.layerX,evt.layerY));
-                        }
-                    }      
-                    break;
-                    case 3:
-                    var selectIndex = -1;
-                    var mindis = 1000000;
-                    for(var i =0;i<Static.ships.length;i++){
-                        if(Static.ships[i].subType == "miningShip"){
-                            _dis = Static.ships[i].cordinates.distance(new Point(evt.layerX,evt.layerY));
-                                
-                            if(_dis<=mindis){
-                                selectIndex = i;
-                                mindis = _dis;
-                            }
-                        }else{
-                            Static.ships[i].moveTo(new Point(evt.layerX,evt.layerY));
-                        }          
-                    }
-                    if(selectIndex != -1){
-                        var cmd = ProtocalGenerater.mining(Static.ships[selectIndex].id,Static.shipController.beingMinedId);
-                            Static.gateway.send(cmd);
-                    }
-                    break;
-                }
-            }
+ShipControler.prototype.onMouseDown = function(e){
+    this.onMouseMove(e);
+    this.mouseDownPoint = this.eventToPoint(e);
+    if(e.button == 0){
+	Static.leftButtonDown = true;
+    }else{
+	Static.rightButtonDown = true;
     }
 }
-
-function OnMouseMove(evt){
-    if(!Static.mousePosition){
-	Static.mousePosition = Point.Point(evt.layerX,evt.layerY);
-    }
-    else{
-	Static.mousePosition.x = evt.layerX;
-	Static.mousePosition.y = evt.layerY;
-    }
-    if(evt.button == 0 && Static.isLeftDown){
-        Static.isSelecting = true;
-        Static.shipController.getShips(evt);
-        if(Static.selectRect){
-            Static.selectRect.position.x=Static.firstPoint.x;
-            Static.selectRect.position.y=Static.firstPoint.y;
-            Static.selectRect.width = evt.layerX - Static.firstPoint.x;
-            //console.log("width1",Static.selectRect.width);
-            Static.selectRect.height = evt.layerY - Static.firstPoint.y;
-        }
-    }
-
-}
-function OnMouseUp(evt){
-    if(evt.button == 0 ){
-        Static.isLeftDown = false;
-        Static.isSelecting = false;
-        Static.isMoving = false;
+ShipControler.prototype.onDraw = function(context){
+    if(this.p1 && this.p2){
+	context.beginPath();
+	context.rect(this.p1.x,this.p1.y
+		     ,this.p2.x-this.p1.x
+		     ,this.p2.y-this.p1.y);
+	context.fill();
     }
 }
-
-function emptySelectShips(ships){
+ShipControler.prototype.eventToPoint = function(e){
+    this.parseEvent(e);
+    return Point.Point(e.layerX,e.layerY);
+}
+ShipControler.prototype.clear = function(){
+    var ships = Static.ships;
     for(var i=0;i<ships.length;i++){
         ships[i].isSelected = false;
     }
     ships.length = 0;
+}
+ShipControler.prototype.remove = function(ship){
+    var ships = Static.ships;
+    for(var i=0;i<ships.length;i++){
+        if(ships[i]===ship){
+	    ships[i].isSelected = false;
+	    return ships.splice(i,1)[0];
+	}
+    }
+    return null;
+}
+ShipControler.prototype.next = function(){
+    
+    //console.log(this.lastLeftButtonDown,Static.leftButtonDown);
+    if(!this.lastLeftButtonDown&&Static.leftButtonDown){
+	this.isMove = false;
+    }
+    if(this.lastLeftButtonDown&&!Static.leftButtonDown){
+	if(!this.isMove){
+	    this.onLeftClick();
+	} 
+	if(this.p1 && this.p2){
+	    p1 = Point.Point(this.p1);
+	    p2 = Point.Point(this.p2);
+	    console.log("~~~~~~~");
+	    this.onRect(p1,p2);
+	}
+	this.p1 = null;
+	this.p2 = null;
+    } 
+    //console.log(this.lastIsMove,this.isMove,Static.leftButtonDown);
+    if(!this.lastIsMove && this.isMove && Static.leftButtonDown){
+	this.p1 = Point.Point(Static.mousePosition);
+    }
+    if(this.isMove){
+	this.p2 = Point.Point(Static.mousePosition);
+    }
+    if(!this.lastRightButtonDown&&Static.rightButtonDown){
+	this.isMove = false;
+    }
+    if(this.lastRightButtonDown&&!Static.rightButtonDown){
+	//if(!this.isMove){
+	this.onRightClick();
+	//}
+    }
+    this.lastLeftButtonDown = Static.leftButtonDown; 
+    this.lastRightButtonDown = Static.rightButtonDown;
+    this.lastIsMove = this.isMove;
+}
+ShipControler.prototype.onLeftClick = function(){
+    var p = Point.Point(Static.mousePosition);
+    this.clear();
+    Static.battleFieldDisplayer.screenToBattleField(p);
+    console.log(p.toString());
+    var ship = Static.battleFieldDisplayer.getShipByPosition(p);
+    if(ship){
+	this.addSelectShip(ship);
+    }
+}
+ShipControler.prototype.onRightClick = function(){
+    var p = Point.Point(Static.mousePosition);
+    Static.battleFieldDisplayer.screenToBattleField(p);
+    var ship = Static.battleFieldDisplayer.getShipByPosition(p); 
+    var tempArr = Static.ships;
+    if(ship && ship.team!=Static.userteam){
+	//attack
+	for(var i=0,length=tempArr.length;i < length;i++){
+	    var item = tempArr[i];
+	    if(item.team!=Static.userteam)return;
+	    if(item.type!="ship")return;
+	    if(item.subType == "motherShip" 
+	       ||item.subType == "attackShip"){
+		console.log(item.subType);
+		Static.gateway.send({
+		    cmd:OperateEnum.ATTACK
+		    ,id:item.id
+		    ,targetId:ship.id
+		})
+	    }
+	    if(item.subType == "miningShip"){
+		Static.gateway.send({
+		    cmd:OperateEnum.MOVE
+		    ,id:item.id
+		    ,position:ship.cordinates
+		})
+	    }
+	}
+	return;
+    }
+    var mine = Static.battleFieldDisplayer.getMineByPosition(p);
+    if(mine){
+	for(var i=0,length=tempArr.length;i < length;i++){
+	    var item = tempArr[i];
+	    if(item.team!=Static.userteam)return; 
+	    if(item.subType=="miningShip"){
+		Static.gateway.send({
+		    cmd:OperateEnum.MINING
+		    ,id:item.id
+		    ,targetId:mine.id
+		})
+		this.remove(item);
+		return;
+	    }
+	}
+    }
+    if(Static.ships.length>0){
+	//normal move
+	for(var i=0,length=tempArr.length;i < length;i++){
+	    var item = tempArr[i];
+	    if(item.team!=Static.userteam)return;
+	    if(item.type!="ship")return;
+	    Static.gateway.send({
+		cmd:OperateEnum.MOVE
+		,id:item.id
+		,position:p
+	    })
+	}
+    }
+}
+ShipControler.prototype.onRect = function(p1,p2){
+    Static.battleFieldDisplayer.screenToBattleField(p1);
+    Static.battleFieldDisplayer.screenToBattleField(p2)
+    this.getShipsByRect(p1,p2);
+}
+ShipControler.prototype.getShipsByRect = function(p1,p2){
+    this.clear();
+    var arr = Static.battleField.parts;
+    for(var i=0;i < arr.length;i++){
+	var item = arr[i]; 
+	if(item.type=="ship"
+	   &&this.isShipInRect(item,p1,p2)
+	   &&Static.userteam == item.team){
+	    this.addSelectShip(item);
+	}
+    }
+}
+ShipControler.prototype.isShipInRect = function(ship,p1,p2){
+    var p = ship.cordinates;
+    return (p1.x-p.x)*(p2.x-p.x)<0 && (p1.y-p.y)*(p2.y-p.y)<0;
 }

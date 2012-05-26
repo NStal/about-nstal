@@ -8,6 +8,12 @@
 		cmd:OperateEnum.DEAD
 		,id:ship.id
 	    })
+	    if(ship.subType == "motherShip"){
+		Static.gateway.boardCast({
+		    cmd:OperateEnum.END
+		    ,lost:ship.team
+		})
+	    }
 	});
 	Static.battleField.on("shipFire",function(ship,target){
 	    Static.gateway.boardCast({
@@ -20,7 +26,7 @@
 		,id:target.id
 		,damage:ship.attack
 	    })
-	}); 
+	});
 	Static.battleField.on("shipGain",function(ship,mine){
 	    console.log("judger give",mine.size);
 	    Static.gateway.boardCast({
@@ -30,7 +36,10 @@
 		,ammount:mine.size
 	    });
 	})
-	
+	Static.battleField.on("end",function(){
+	    Static.battleField.initialize([],Static.battleField.map);
+	    Static.battleField.initTeamInfo();
+	});
 	Static.battleField.on("makeShip",function(info){
 	    var id = Math.floor((Math.random()*1000000)).toString();
 	    Static.gateway.boardCast({

@@ -78,16 +78,20 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	else{
 	    this.index=1;
 	}
-	if(this.isSelected){
-	    context.save();
-	    context.rotate(-this.rotation);
-	    //draw life
-	    context.beginPath();
-	    context.arc(0,0,this.size,0,Math.PI*2*this.life/this.maxLife);
+	//draw life
+	context.save();
+	context.rotate(-this.rotation); 
+	context.beginPath();
+	context.arc(0,0,this.size,0,Math.PI*2*this.life/this.maxLife);
+	if(this.team == Static.userteam)
 	    context.strokeStyle = "green";
-	    context.stroke();
-	    context.rotate(this.index/5);
-	    context.globalAlpha = (Math.sin(this.index/5)+2)/3;
+	else
+	    context.strokeStyle = "red";
+	context.stroke();
+	context.rotate(this.index/5);
+	context.globalAlpha = (Math.sin(this.index/5)+2)/3;
+	
+	if(this.isSelected){
 	    //draw selection
 	    context.beginPath();
 	    context.arc(0,0,this.size+8,0,Math.PI*2-1);
@@ -98,8 +102,8 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	    context.arc(0,0,this.size+4,0,Math.PI*2-1);
 	    context.strokeStyle = "black";
 	    context.stroke();
-	    context.restore();
-	}
+	} 
+	context.restore();
     }
     ship.moveTo = function(position){
 	var cmd = ProtocalGenerater.moveTo(this.id
@@ -155,6 +159,38 @@ BattleFieldDisplayer.prototype.moveViewPort = function(p){
     if(this.position.x>0)this.position.x=0;
     if(this.position.y>0)this.position.y=0;
 }
-BattleFieldDisplayer.prototype.getShipByPosition = function(){
-    
+BattleFieldDisplayer.prototype.screenToBattleField = function(p){
+    p.x -= this.position.x;
+    p.y -= this.position.y;
+    return p;
+}
+BattleFieldDisplayer.prototype.getShipByPosition = function(position){
+    var distance = 999999;
+    var ship = null;
+    for(var i=0;i<this.parts.length;i++){
+	var item = this.parts[i]
+	var _distance = item.cordinates.distance(position)
+	if(item.type=="ship" 
+	   &&  _distance< distance
+	   && _distance<item.size*2){
+	    ship = item;
+	    distance = _distance
+	}
+    }
+    return ship;
+}
+BattleFieldDisplayer.prototype.getMineByPosition = function(position){
+    var distance = 999999;
+    var mine = null;
+    for(var i=0;i<this.parts.length;i++){
+	var item = this.parts[i]
+	var _distance = item.cordinates.distance(position)
+	if(item.type=="mine" 
+	   &&  _distance< distance
+	   && _distance<item.size){
+	    mine = item;
+	    distance = _distance
+	}
+    }
+    return mine;
 }
