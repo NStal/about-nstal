@@ -1,7 +1,6 @@
 var BattleFieldDisplayer = Drawable.sub();
-BattleFieldDisplayer.prototype._init = function(){
-    this.battleFieldSimulator = new BattleFieldSimulator();
-    
+BattleFieldDisplayer.prototype._init = function(bfs){
+    this.battleFieldSimulator = bfs; 
     //so we can call this.draw(context);
     this.parts = this.battleFieldSimulator.parts;
     var self = this;

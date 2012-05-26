@@ -17,9 +17,7 @@
 	    console.trace();
 	    return;
 	} 
-	console.log("ship int",info.cordinates);
-	this.cordinates = info.cordinates?Point.Point(info.cordinates):Point.Point(0,0);
-	console.log("ship int",this.cordinates);
+	this.cordinates = info.cordinates?Point.Point(info.cordinates):Point.Point(0,0); 
 	this.team = info.team; 
 	this.ability = {};
 	if(info.ability){
@@ -43,15 +41,12 @@
 	}else{
 	    this.toward = 0;
 	}
-	if(typeof info.size == "number"){
-	    this.size = info.size
-	}else{
-	    this.size = 10;
-	}
+	this.size = 10;
     }
     Ship.prototype.toData = function(){
 	var data ={
 	    id:this.id
+	    ,team:this.team
 	    ,cordinates:{
 		x:this.cordinates.x
 		,y:this.cordinates.y
@@ -78,11 +73,13 @@
 	}
 	rotateSpeed = this.state.maxRotateSpeed;
 	this.toward += fix*rotateSpeed;
+	
 	this.toward = Math.mod(this.toward,Math.PI*2);
 	
 	var fix = this.action.speedFix;
 	var speed = this.state.maxSpeed;
 	//move
+	
 	this.cordinates.x+=Math.cos(this.toward) *speed*fix;
 	this.cordinates.y+=Math.sin(this.toward) *speed*fix;
 	this.action.speedFix = 0;

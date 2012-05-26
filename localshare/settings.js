@@ -1,10 +1,7 @@
+var Static = require("../share/static").Static;
 exports.settings = {
     rate:30
-    ,host:"localhost"
+    ,host:"0.0.0.0"
     ,port:10000
-    ,localport:20000
-    //instruction should be 5 frame head server battleField
-    ,delay:5 //160ms
-    ,dbhost:"localhost"
-    ,dbport:27017
 }
+Static.settings = exports.settings;

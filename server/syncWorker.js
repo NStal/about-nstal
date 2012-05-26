@@ -1,4 +1,4 @@
-var EventEmitter = require("./share/util").sub();
+var EventEmitter = require("./share/util").EventEmitter;
 var SyncWorker = EventEmitter.sub();
 SyncWorker.prototype._init = function(ws){
     var self = this; 
@@ -25,3 +25,4 @@ SyncWorker.prototype.send = function(msg){
     this.ws.send(JSON.stringify(msg));
     return this;
 }
+exports.SyncWorker = SyncWorker;

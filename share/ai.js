@@ -11,6 +11,8 @@
 	this.destination = {};
     }
     AI.prototype.calculate = function(){
+	this.ship.action.rotateFix = 0;
+	this.ship.action.speedFix = 0;
 	if(this.destination.roundRoute){
 	    if(this.destination.roundRoute===this.ship.cordinates)return;
 	    this._adjustRoundAt(this.destination.roundRoute.point,
@@ -25,7 +27,7 @@
         this.destination = {};
     }
     AI.prototype._adjustToPoint = function(targetPoint){
-	var targetPoint = new Point(targetPoint);
+	var targetPoint = Point.Point(targetPoint);
 	var ship = this.ship; 
 	ship.action.speedFix = 0;
 	ship.action.rotateFix = 0;
@@ -90,6 +92,7 @@
     //how
     AI.prototype._adjustRoundAt = function(point,r,antiClockWise){
 	//using matrix to calculate the rotate;
+	
 	if(antiClockWise)clockWise = -1;
 	else clockWise = 1;
 	var size = this.ship.size?this.ship.size/2:this.ship.state.maxSpeed*2;
