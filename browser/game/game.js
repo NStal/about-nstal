@@ -3,7 +3,7 @@ Static.settings = {
     height:800
     ,width:1280
     ,rate:30
-    ,host:"10.42.43.1"
+    ,host:"127.0.0.1"
     ,port:10000
 }
 Game.prototype._init = function(canvas){
@@ -13,6 +13,7 @@ Game.prototype._init = function(canvas){
     this.setRate(Static.settings.rate);
     Static.battleField = new BattleFieldSimulator();
     Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
+    console.log(Static.battleField.toData());
     Static.gateway = new Gateway();
     Static.gateway.connect();
     Static.gateway.on("open",function(){
@@ -32,5 +33,5 @@ Game.prototype.next = function(){
 		      ,Static.settings.height);
     Static.battleFieldDisplayer.next();
     Static.battleFieldDisplayer.draw(context);
-    console.log(Static.battleField.time);
+    //console.log(Static.battleField.time);
 }
