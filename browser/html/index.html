@@ -30,19 +30,21 @@
     <script type="text/javascript" src="site/main.js"></script>
     <script type="text/javascript" src="site/loginPage.js"></script>
     <script type="text/javascript" src="site/popContainer.js"></script>
+    <script type="text/javascript" src="game/sylvester.js"></script>
     <script type="text/javascript" src="share/item.js"></script>
+    <script type="text/javascript" src="site/resourceDisplayer.js"></script>
+    <script type="text/javascript" src="game/test.js"></script>
 </head>
   <body>
+    <canvas id="screen"> 
+    </canvas> 
     <div id="loginPage">
       <h1>登录</h1> 
       <form method="GET" action="#"> 
-        用户名：<input type="text" id="username"/><br/>
+        <input type="text" id="username" placeholder="用户名"/>
         <input type="button" id="confirm" value="登录"/>
       </form>
     </div>
-    <canvas id="screen">
-      
-    </canvas>
     <div id="popContainer">
         <div id="popTitle">
         </div>

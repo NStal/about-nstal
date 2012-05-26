@@ -11,6 +11,7 @@ Game.prototype._init = function(canvas){
     this.canvas.width = Static.settings.width
     this.canvas.height = Static.settings.height;
     this.setRate(Static.settings.rate);
+    this.team = [];
     Static.gameResourceManager = new GameResourceManager();
     Static.gameResourceManager.load(Items);
     Static.battleField = new BattleFieldSimulator();
@@ -18,12 +19,11 @@ Game.prototype._init = function(canvas){
     Static.gateway = new Gateway();
     Static.gateway.connect();
     Static.gateway.on("open",function(){
-	Static.gateway.send({cmd:OperateEnum.SYNC});
+	Static.gateway.send({cmd:OperateEnum.SYNC
+			     ,username:Static.username});
     })
     Static.battleField.on("initialized",function(){
-	Static.gateway.send(ProtocalGenerater.moveTo("1"
-						     ,1000
-						     ,300))
+	RunTest();
     })
 }
 Game.prototype.next = function(){

@@ -12,6 +12,7 @@
 	}
 	var proto = Static.gameResourceManager.get(info.itemId);
 	this.type = "ship";
+	this.coolDownIndex = 0;
 	if(info.id)
 	    this.id = info.id.toString();
 	if(!this.id){
@@ -53,9 +54,21 @@
     Ship.prototype.onDead = function(byWho){
 	this.emit("dead",this,byWho);
     }
+    Ship.prototype.onDamage = function(damage){
+	this.life -=damage;
+	if(this.life<=0){
+	    this.life = 0;
+	    this.onDead();
+	}
+    }
     Ship.prototype.next = function(){
 	this.AI.calculate();
 	this.emit("next");
+	if(this.coolDownIndex<this.coolDown){
+	    this.coolDownIndex++;
+	}else{
+	    this.fireReady = true;
+	}
 	var fix = this.action.rotateFix;
 	
 	if(fix>1 || fix < -1){

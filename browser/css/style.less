@@ -1,3 +1,6 @@
+.clickable{
+    cursor:pointer;
+}
 #screen{
     width:1280;
     height:800;
@@ -5,21 +8,40 @@
     display:block;
 }
 #loginPage{
-    display:none;
-    border:2px solid blue;
-    width:400;
-    height:auto;
-    margin-left:auto;
-    margin-right:auto;
-    margin-top:200px;
+    display:block; 
+    position:absolute;
+    width:400px;
+    border-radius:20px;
+    height:200px;
+    background-color:rgba(0,0,0,0.6);
+    top:50%;
+    left:50%;
+    margin:-150px 0 0 -100px;
     h1{
-    text-align:center;
-    } 
-    #confirm{
-	margin-top:10px;
-	font-size:30px;
+	text-align:center;
+	color:white;
+	font-size:14px;
+	margin-top:30px;
     }
-    display:none;
+    form{
+	margin:20px auto;
+	width:400px;
+	input{
+	    text-align:center;
+	    width:200px;
+	    height:30px;
+	    margin:20px auto;
+	    display:block;
+	}
+    }
+    #confirm{
+	margin-top:10pxe
+	height:30px;
+	border:none;
+	background-color:rgba(255,255,255,0.8);
+	border-radius:10px;
+	.clickable;
+    }
 }
 #popContainer{
     border:2px solid blue;
@@ -31,3 +53,18 @@
 
 }
 
+#resourceDisplayer{
+    position:absolute;
+    top:0; 
+    left:0;
+    width:100%;
+    height:30px;
+    background-color:rgba(0,0,0,0.8);
+    .itemName,.itemCount{
+	color:white;
+	float:left;
+	height:30px;
+	line-height:30px;
+	padding:0 5px; 
+    }
+}

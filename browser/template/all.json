@@ -1,1 +1,1 @@
-{"data": {}, "result": "true"}
+{"data": {"resourceDisplayer": "<div id=\"resourceDisplayer\">\n  <div id=\"mine\">\n    <div id=\"mineName\" class=\"itemName\"> \n    </div>\n    <div id=\"mineAmmount\" class=\"itemCount\"> \n    </div>\n  </div>\n</div>\n"}, "result": "true"}

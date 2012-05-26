@@ -25,10 +25,14 @@
 	MAKE_SHIP:6,//造船
 	UPGRADE:7,//升级
 	SYNC:8,//同步所有数据
-	END:9,//战斗结束，某一队输了
-	DEAD:10//某个单位挂了 
+	END:9,//战斗结束，某一队输了 GOD
+	DEAD:10,//某个单位挂了 GOD
+	GAIN:11,//获得资源或物品 GOD
+	FIRE:12, //ship fire at somthing  GOD
+	DAMAGE:13,//ship recieveDamage GOD
+	ABOUTREADY:14,
+	COUNTDOWN:15
     }
-    
     exports.OperateEnum = OperateEnum;
     //协议转换
     var ProtocalGenerater = {};
