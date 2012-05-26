@@ -7,7 +7,8 @@
 	this.size = 50;
 	this.type = "mine";
 	this.id = info.id;
-	console.log(this.position.toString());
+    this.cordinates = this.position;
+    console.log(this.position.toString());
     } 
     exports.Mine =Mine;
 })(exports)
