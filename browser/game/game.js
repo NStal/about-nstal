@@ -3,29 +3,25 @@ Static.settings = {
     height:800
     ,width:1280
     ,rate:30
+    ,host:"10.42.43.1"
+    ,port:10000
 }
 Game.prototype._init = function(canvas){
-    var shipInfo = {
-	cordinates:{x:100,y:100}
-	,ability:{
-	    maxSpeed:10
-	    ,maxRotateSpeed:0.5
-	    ,attack:100
-	    ,range:50
-	}
-	,size:20
-	,id:"1"
-    }
     this.canvas = canvas;
     this.canvas.width = Static.settings.width
     this.canvas.height = Static.settings.height;
     this.setRate(Static.settings.rate);
-    Static.battleField = new BattleFieldDisplayer();
-    
-    var ship = Static.battleField.initShip(shipInfo);
-    ship.AI.moveTo({
-	x:300
-	,y:300
+    Static.battleField = new BattleFieldSimulator();
+    Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
+    Static.gateway = new Gateway();
+    Static.gateway.connect();
+    Static.gateway.on("open",function(){
+	Static.gateway.send({cmd:OperateEnum.SYNC});
+    })
+    Static.battleField.on("initialized",function(){
+	Static.gateway.send(ProtocalGenerater.moveTo("1"
+						     ,Math.random()*500
+						     ,Math.random()*500))
     })
 }
 Game.prototype.next = function(){
@@ -34,6 +30,7 @@ Game.prototype.next = function(){
     context.clearRect(0,0
 		      ,Static.settings.width
 		      ,Static.settings.height);
-    Static.battleField.next();
-    Static.battleField.draw(context);
+    Static.battleFieldDisplayer.next();
+    Static.battleFieldDisplayer.draw(context);
+    console.log(Static.battleField.time);
 }

@@ -7,6 +7,7 @@
     var BattleFieldSimulator = Container.sub();
     var Ship = require("./ship").Ship;
     var Static = require("./static").Static;
+    var OperateEnum =require("./protocol").OperateEnum; 
     EventEmitter.mixin(BattleFieldSimulator);
     BattleFieldSimulator.prototype._init = function(){
 	this.size = Point.Point(10000,10000);
@@ -25,9 +26,9 @@
 	};
     }
     BattleFieldSimulator.prototype.next = function(){
-	this.applyInstruction(this.time);
 	this.time++;
-	Static.time = this.time;
+	Static.time = this.time; 
+	this.applyInstruction();
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
 	    this.calculateUnit(item);
@@ -36,14 +37,21 @@
 	    //if near star gate
 	} 
     }
-    BattleFieldSimulator.prototype.applyInstruction = function(time){
-	this.time = time;
+    BattleFieldSimulator.prototype.applyInstruction = function(){
 	for(var i=0,length=this.instructionQueue.length;i < length;i++){
 	    var item = this.instructionQueue[i];
 	    if(item.time<this.time){
-		console.error("recieve oudated instruction");
+		console.error("recieve oudated instruction current"
+			      ,this.time
+			      ,"time:"
+			      ,item.time);
 		console.error("fatal error");
 		console.trace();
+		this.emit("outdate");
+		this.instructionQueue.splice(i,1);
+		i--;
+		length--;
+		continue;
 	    }
 	    if(item.time == this.time){
 		var ins = item;
@@ -53,8 +61,6 @@
 		length--;
 	    }
 	} 
-    }
-    BattleFieldSimulator.prototype._excute = function(instruction){
     }
     BattleFieldSimulator.prototype.calculateUnit = function(unit){
 	if(unit.type == "ship"){
@@ -78,12 +84,26 @@
 	this.time = time;
     }
     BattleFieldSimulator.prototype.initialize = function(shipsInfo){
+	
 	this.emit("initialize");
 	this.parts.length = 0;
 	this.instructionQueue.length = 0;
-	this.initShips(shipsInfo);
+	this.initShips(shipsInfo); 
+	this.emit("initialized");
+    }
+    BattleFieldSimulator.prototype.initShips = function(shipInfos){
+	var arr = shipInfos;
+	var ships = [];
+	for(var i=0;i < arr.length;i++){
+	    var item = arr[i]; 
+	    var ship = this.enterShip(item);
+	    ships.push(ship);
+	} 
+	this.emit("shipInitialized",ships);
+	return ships;
     }
     BattleFieldSimulator.prototype.initEnvironment = function(galaxy){
+	
     }
     BattleFieldSimulator.prototype.enterShip = function(info){
 	var ship = new Ship(info);
@@ -91,10 +111,48 @@
 	return ship;
     }
     BattleFieldSimulator.prototype.initShip = function(ship){
-	var ship = this.enterShip(ship);
-	this.emit("shipInitialized",[ship]);
-	
-	return ship;
+	return this.initShips([ship])[0]
+    }
+    BattleFieldSimulator.prototype.moveShipTo = function(cmd){
+	if(cmd.id instanceof Array){
+	    ids = cmd.id;
+	}else{
+	    ids = [cmd.id]
+	}
+	var ships = [];
+	for(var i=0;i<ids.length;i++){
+	    var ship = this.getShipById(ids[i]);
+	    if(ship){
+		ships.push(ship);
+	    }
+	    else{
+		ships.push({id:ids[i]
+			    ,invalid:true});
+	    }
+	} 
+	for(var i=0;i<ships.length;i++){
+	    var ship = ships[i];
+	    if(ship.invalid){
+		console.error("!!");
+		console.warn("ship of id",ship.id,"not found");
+		console.trace();
+		continue;
+	    } 
+	    if(typeof cmd.position.x!="number"||
+	       typeof cmd.position.y!="number"){
+		console.warn("invalid position",cmd.position);
+		console.trace();
+		return;
+	    } 
+	    ship.AI.moveTo(cmd.position);
+	} 
+    }
+    BattleFieldSimulator.prototype._excute = function(instruction){
+	switch(instruction.cmd){
+	case OperateEnum.MOVE:
+	    this.moveShipTo(instruction)
+	    break;
+	}
     }
     exports.BattleFieldSimulator = BattleFieldSimulator;
 })(exports)
