@@ -1,11 +1,11 @@
 (function(exports){
     var Instance = require("./util").Instance;
-    var Static = require("./static").Static;
     var GameInstance = require("./gameUtil").GameInstance;
     var World = Instance.sub();
-    var Static = require("./static"); 
+    var Static = require("./static").Static;
     World.prototype._init = function(){
 	//set GameInstanceRate
+	if(!Static.settings)return;
 	GameInstance.setTickPerUnitTime(Static.settings.rate); 
 	//set Debug
 	Instance.toggleDebug();

@@ -12,7 +12,11 @@
 	this.battleField.gateway = this;
     }
     ServerGateway.prototype.onConnect = function(worker){
-	
+	this.add(worker);
+	var self = this;
+	worker.on("close",function(worker){
+	    
+	})
     }
     ServerGateway.prototype.boardCast = function(){
 	

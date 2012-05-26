@@ -11,6 +11,7 @@
     BattleFieldSimulator.prototype._init = function(){
 	this.size = Point.Point(10000,10000);
 	this.instructionQueue = []; 
+	this.time = 0;
     }
     BattleFieldSimulator.prototype.toData = function(){
 	var ships = [];
@@ -30,6 +31,8 @@
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
 	    this.calculateUnit(item);
+	    item.position = item.cordinates;
+	    item.rotation = item.toward;
 	    //if near star gate
 	} 
     }
