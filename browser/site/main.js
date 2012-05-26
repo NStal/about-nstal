@@ -8,4 +8,5 @@ Main = Class.sub();
 Main.prototype.init = function(){
     Static.game = new Game(document.getElementById("screen"));
     Static.game.start();
+    Static.loginPage = new LoginPage(document.getElementById("loginPage"));
 }

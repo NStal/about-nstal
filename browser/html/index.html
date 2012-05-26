@@ -6,6 +6,7 @@
     <script type="text/javascript" src="plugins/sound/soundmanager2.js"></script>
     
     <script type="text/javascript" src="site/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="site/jXFrame/jTool.js"></script>
     <script type="text/javascript" src="site/jXFrame/widget.js"></script>
     <script type="text/javascript" src="site/jXFrame/apiManager.js"></script> 
     <script type="text/javascript" src="game/framework/static.js"></script>
@@ -22,14 +23,16 @@
     <script type="text/javascript" src="share/world.js"></script>
     <script type="text/javascript" src="game/game.js"></script>
     <script type="text/javascript" src="site/main.js"></script>
+    <script type="text/javascript" src="site/loginPage.js"></script>
   </head>
   <body>
-    <section id="logIn">
-        <h1>登录<h1>
-                
-         用户名：<input type="text" id="username"/><br/>
+    <div id="loginPage">
+      <h1>登录</h1> 
+      <form method="GET" action="#"> 
+        用户名：<input type="text" id="username"/><br/>
         <input type="button" id="confirm" value="登录"/>
-    </section>
+      </form>
+    </div>
     <canvas id="screen">
       
     </canvas>
