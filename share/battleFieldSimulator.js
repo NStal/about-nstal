@@ -26,7 +26,7 @@
     BattleFieldSimulator.prototype.next = function(){
 	this.applyInstruction(this.time);
 	this.time++;
-	Static.time = time;
+	Static.time = this.time;
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
 	    this.calculateUnit(item);
