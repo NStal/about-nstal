@@ -11,11 +11,13 @@ Game.prototype._init = function(canvas){
     this.canvas.width = Static.settings.width
     this.canvas.height = Static.settings.height;
     this.setRate(Static.settings.rate);
+    Static.selectRect = new SelectRect();
+    Static.selectRect.alpha = 0.3
     Static.gameResourceManager = new GameResourceManager();
     Static.gameResourceManager.load(Items);
     Static.battleField = new BattleFieldSimulator();
     Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
-    console.log(Static.battleField.toData());
+    Static.isShipSelect=false;
     Static.gateway = new Gateway();
     Static.gateway.connect();
     Static.gateway.on("open",function(){
@@ -25,7 +27,8 @@ Game.prototype._init = function(canvas){
 	Static.gateway.send(ProtocalGenerater.moveTo("1"
 						     ,1000
 						     ,300))
-    })
+    Static.shipController = new ShipControler(canvas,Static.battleField);
+        })
 }
 Game.prototype.next = function(){
     Game.parent.prototype.next.call(this);
@@ -35,5 +38,6 @@ Game.prototype.next = function(){
 		      ,Static.settings.height);
     Static.battleFieldDisplayer.next();
     Static.battleFieldDisplayer.draw(context);
+    Static.selectRect.draw(context);
     //console.log(Static.battleField.time);
 }

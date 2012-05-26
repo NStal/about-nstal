@@ -19,4 +19,5 @@ Main.prototype.init = function(){
     Static.game.start();
     Static.loginPage = new LoginPage(document.getElementById("loginPage"));
     Static.popContainer = new PopContainer(document.getElementById("popContainer"));
+    document.getElementById("screen").oncontextmenu = function(){return false;}
 }
