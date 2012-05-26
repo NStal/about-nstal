@@ -10,7 +10,8 @@
 	if(!info){
 	    return;
 	}
-	var proto = Static.gameResourceManager.get(info.itemId);
+	this.proto = Static.gameResourceManager.get(info.itemId);
+	var proto = this.proto;
 	this.type = "ship";
 	this.coolDownIndex = 0;
 	if(info.id)
@@ -29,6 +30,9 @@
 	    this.action = {};
 	}
 	this.AI = new AI(this);
+	if(info.AI){
+	    Util.update(this.AI,info.AI);
+	}
 	if(typeof info.toward == "number"){
 	    this.toward = info.toward;
 	}else{

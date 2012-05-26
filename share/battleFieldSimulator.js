@@ -285,7 +285,15 @@
 	    this.addMotherShip();
 	} 
     } 
-    BattleFieldSimulator.prototype.buildShip = function(instruction){
+    BattleFieldSimulator.prototype.makeShip = function(instruction){
+	var team = instruction.team;
+	var itemId = instruction.itemId;
+	this.emit("makeShip",{
+	    team:team
+	    ,itemId:itemId
+	})
+    };
+    BattleFieldSimulator.prototype.createShip = function(instruction){
 	var team = instruction.team;
 	var motherShip = this.getShipById(team);
 	var info = {
@@ -293,7 +301,7 @@
 	    ,itemId:instruction.itemId
 	    ,cordinates:motherShip.cordinates
 	}
-	this.initShip(info);
+	var ship = this.initShip(info);
 	this.emit("shipBuilt",ship);
     }
     BattleFieldSimulator.prototype._excute = function(instruction){
@@ -322,8 +330,11 @@
 	case OperateEnum.COUNTDOWN:
 	    this.countDown(instruction);
 	    break;
+	case OperateEnum.CREATE_SHIP:
+	    this.createShip(instruction);
+	    break;
 	case OperateEnum.MAKE_SHIP:
-	    this.buildShip(instruction);
+	    this.makeShip(instruction);
 	    break;
 	}
     }

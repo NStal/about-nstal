@@ -8,6 +8,6 @@
 	this.type = "mine";
 	this.id = info.id;
 	console.log(this.position.toString());
-    } 
+    }
     exports.Mine =Mine;
 })(exports)

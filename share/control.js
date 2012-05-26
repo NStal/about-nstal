@@ -1,12 +1,12 @@
 var ShipControler = Class.sub();
 ShipControler.prototype._init = function(canvas,bfs){
+    
     canvas.addEventListener("mousemove",OnMouseMove,false);
     canvas.addEventListener("mouseup",OnMouseUp,false);
     this.battleFieldSimulator = bfs;
     this.parts = this.battleFieldSimulator.parts;
     canvas.addEventListener("mousedown",OnMouseDown,false);
 }
-
 ShipControler.prototype.calcuDis = function(evt){
     var minDistance = 10000;
     var index = -1;
@@ -63,8 +63,8 @@ function OnMouseDown(evt){
                 Static.isShipSelect = false;
             }
         }else if(evt.button == 2 && Static.isShipSelect){
-                Static.ship.moveTo(Static.ship.cordinates); 
-            }
+            Static.ship.moveTo(Static.firstPoint); 
+        }
     }
 }
 

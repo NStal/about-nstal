@@ -23,7 +23,7 @@
 	info2.cordinates.x = 700;
 	info2.itemId = "1";
 	this.map = require("./share/map.js").map
-	Static.battleField.initialize([genShipInfo(),info2]
+	Static.battleField.initialize([]
 				      ,this.map);
 	console.log("add ship");
 	Static.judger = new Judger();

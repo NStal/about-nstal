@@ -30,13 +30,23 @@
 		,ammount:mine.size
 	    });
 	})
-	Static.gateway.on("shipBuilt",function(ship){
+	
+	Static.battleField.on("makeShip",function(info){
+	    var id = Math.floor((Math.random()*1000000)).toString();
+	    Static.gateway.boardCast({
+		cmd:OperateEnum.CREATE_SHIP
+		,id:id
+		,team:info.team
+		,itemId:info.itemId
+	    });
+	})
+	Static.battleField.on("shipBuilt",function(ship){
 	    Static.gateway.boardCast({
 		cmd:OperateEnum.MOVE
 		,id:ship.id
 		,position:{
-		    x:ship.position.x+(Math,random()-0.5)*30
-		    ,y:ship.position.y+(Math,random()-0.5)*30
+		    x:ship.cordinates.x+(Math.random()-0.5)*100
+		    ,y:ship.cordinates.y+(Math.random()-0.5)*100
 		}
 	    })
 	});

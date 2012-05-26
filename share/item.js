@@ -4,15 +4,16 @@
 	"0":{
             name:"母船",
             speed:20, 
-	    maxSpeed:1.5,
-	    maxRotateSpeed:0.15,
+	    maxSpeed:0.8,
+	    maxRotateSpeed:0.02,
             maxLife:2000,
-            life:100,
+            life:2000,
             level:0,
 	    subType:"motherShip"
 	    ,size:50
 	    ,range:100
 	    ,attack:50
+	    ,src:"motherShip"
 	},
 	"1":{
             name:"矿船",
@@ -21,14 +22,17 @@
             ability:20,
             maxLife:100,
             life:200,
-            level:0,
-	    
+            level:0, 
 	    subType:"miningShip" 
 	    ,curveForwarding:true
 	    ,size:30 
 	    ,range:20
 	    ,attack:0
 	    ,coolDown:90
+	    ,consume:{
+		mine:1000
+		,time:600
+	    }
 	},
 	"2":{
             name:"攻击船",
@@ -43,7 +47,11 @@
 	    ,size:20
 	    ,curveForwarding:true
 	    ,attack:10
-	    ,range:80
+	    ,range:80 
+	    ,consume:{
+		mine:1000
+		,time:300
+	    }
 	},
 	"3":{
             name:"防御塔",

@@ -12,6 +12,9 @@
     }
     AI.prototype.calculate = function(){
 	if(this.destination.target){
+	    if(typeof this.destination.target!="object"){
+		this.attackAt(Static.battleField.getShipById(this.destination.target));
+	    }
 	    if(this.destination.target.isDead){
 		this.destination.target = null
 	    }else{
@@ -24,6 +27,9 @@
 	    }
 	}
 	if(this.destination.mineTarget){
+	    if(typeof this.destination.mineTarget!="object"){
+		this.mineAt(Static.battleField.getMineById(this.destination.mineTarget));
+	    }
 	    if(this.ship.fireReady
 	       && this.destination.mineTarget.position.distance(this.ship.cordinates)<this.ship.range+this.destination.mineTarget.size){
 		this.ship.emit("gain",this.destination.mineTarget);
@@ -175,8 +181,11 @@
 	    destination:{
 		targetPoint:this.destination.targetPoint
 		,roundRoute:this.destination.roundRoute
+		,target:this.destination.target?this.destination.target.id:undefined
+		,mineTarget:this.destination.mineTarget?this.destination.mineTarget.id:undefined
 	    }
 	}
+	console.log(data);
 	return data;
     }
     exports.AI = AI;

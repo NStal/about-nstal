@@ -31,7 +31,8 @@
 	FIRE:12, //ship fire at somthing  GOD
 	DAMAGE:13,//ship recieveDamage GOD
 	ABOUTREADY:14,
-	COUNTDOWN:15
+	COUNTDOWN:15,
+	CREATE_SHIP:16
     }
     exports.OperateEnum = OperateEnum;
     //协议转换

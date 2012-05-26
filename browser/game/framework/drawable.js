@@ -28,6 +28,16 @@
     Drawable.prototype.draw = function(context){
 	//recursive drawing
 	context.save();
+	
+	for(var i=0;this.effects&&i<this.effects.length;i++){
+	    if(this.effects[i].onBeforeRender)
+		this.effects[i].onBeforeRender(context);
+	}
+	if(this.effectQueue && this.effectQueue[0] && this.effectQueue[0].onBeforeRender){
+	    if(this.effectQueue[0].onBeforeRender(context)){
+		this.effectQueue.shift();
+	    }
+	}
 	if(typeof this.alpha != "undefined" && this.alpha!=1){
 	    context.globalAlpha = this.alpha;
 	}else{
@@ -57,15 +67,6 @@
 		context.translate(this.invertPadding,0);
 	    }
 	    context.scale(-1,1);
-	}
-	for(var i=0;this.effects&&i<this.effects.length;i++){
-	    if(this.effects[i].onBeforeRender)
-		this.effects[i].onBeforeRender(context);
-	}
-	if(this.effectQueue && this.effectQueue[0] && this.effectQueue[0].onBeforeRender){
-	    if(this.effectQueue[0].onBeforeRender(context)){
-		this.effectQueue.shift();
-	    }
 	}
 	if(typeof this.onDraw == "function"){
 	    this.onDraw(context);

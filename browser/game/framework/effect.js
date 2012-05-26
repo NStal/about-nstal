@@ -17,7 +17,7 @@
 	}
     }
     Effect.prototype.onBeforeRender = function(){
-	if(!this.repeat && this.length<=this.index){
+	if(!this.repeat&& this.length<=this.index){
 	    this.remove();
 	    return true;
 	}
@@ -34,7 +34,7 @@
 	this.range = info.range?info.range:30;
 	this.radian = info.angle?info.angle/180*Math.PI:0;
 	this.length = info.length?info.length:30;
-	this.time = info.frequency?info.time:10;
+	this.time = info.time?info.time:10;
     }
     Shake.prototype.onBeforeRender = function(context){
 	var result = Shake.parent.prototype.onBeforeRender.call(this,context);

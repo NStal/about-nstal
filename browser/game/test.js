@@ -5,12 +5,7 @@ RunTest = function(){
 		ProtocalGenerater.moveTo(
 		    "1"
 		    ,1000
-		    ,300)); 
-	    Static.gateway.send(
-		ProtocalGenerater.moveTo(
-		    "2"
-		    ,500
-		    ,100));
+		    ,300));
 	}
 	,time:100
     },{
@@ -34,7 +29,7 @@ RunTest = function(){
 	,time:3000
     }];
     for(var i=0;i<tests.length;i++){
-	setTimeout(tests[i].test,tests[i].time)
+	//setTimeout(tests[i].test,tests[i].time)
     }
     
 }
