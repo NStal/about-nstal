@@ -7,8 +7,7 @@ PopContainer.prototype.setTitle = function(title){
 }
 PopContainer.prototype.setItemsData = function(items){
     this.popContentJ.empty();
-    for(i=0;i<items.length;i++)
-    {
+    for(i=0;i<items.length;i++){
         var item = items[i];
         var _item = new PopContainerItem(item.name,item.callback);
         this.popContentJ.append(_item.nodeJ);

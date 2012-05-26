@@ -18,7 +18,8 @@
 	})
 	this.connector.on("message",function(msg){
 	    if(msg.cmd == OperateEnum.SYNC){
-		Static.battleField.initialize(msg.data.ships);
+		Static.battleField.initialize(msg.data.ships,
+					      map);
 		Static.battleField.time = msg.time;
 		return;
 	    }

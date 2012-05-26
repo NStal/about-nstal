@@ -47,7 +47,7 @@
 	    }else{
 		clockWise = -1;
 	    }
-	    var rotateSpeed = ship.state.maxRotateSpeed;
+	    var rotateSpeed = ship.maxRotateSpeed;
 	    
 	    if(Math.abs(rdistance) > Math.abs(rotateSpeed)){
 		ship.action.rotateFix = 1* clockWise;
@@ -56,10 +56,10 @@
 		//console.log(ship.action.rotateFix*rotateSpeed);
 	    }
 	    //big ship cant curve-forwarding
-	    if(!this.ship.state.curveForwarding)return false;
+	    if(!this.ship.curveForwarding)return false;
 	}
 	var distance = targetPoint.distance(ship.cordinates);
-	var speed = ship.state.maxSpeed;
+	var speed = ship.maxSpeed;
 	if(distance>speed){
 	    ship.action.speedFix = 1;
 	}else{
@@ -95,7 +95,7 @@
 	
 	if(antiClockWise)clockWise = -1;
 	else clockWise = 1;
-	var size = this.ship.size?this.ship.size/2:this.ship.state.maxSpeed*2;
+	var size = this.ship.size?this.ship.size/2:this.ship.maxSpeed*2;
 	var x=size;
 	var y=Math.sqrt(r*r-x*x);
 	var posMatrix = $M([[x*clockWise],[y],[1]]);
