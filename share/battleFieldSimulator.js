@@ -11,7 +11,7 @@
     var Mine = require("./mine").Mine;
     EventEmitter.mixin(BattleFieldSimulator);
     BattleFieldSimulator.prototype._init = function(){
-	this.size = Point.Point(10000,10000);
+	this.size = Point.Point(3000,3000);
 	this.instructionQueue = []; 
 	this.time = 0;
 	this.initTeamInfo();

@@ -7,22 +7,29 @@ InteractionManager.prototype._init = function(){
 	self.add(ammor);
 	console.error("~~~~");
     })
+    Static.battleField.on("gained",function(ship,mine,ammount){
+	self.add(new EarnAnimation(ship,mine,ammount));
+    });
 }
 
 var EarnAnimation = Drawable.sub()
-EarnAnimation.prototype._init = function(ship,ammount){
+EarnAnimation.prototype._init = function(ship,mine,ammount){
+    this.mine = mine;
     this.position = ship.cordinates;
     this.index=0;
     this.length = 30;
+    this.ammount = ammount
 }
 EarnAnimation.prototype.onDraw = function(context){
     if(this.index==this.length){
-	this.parentContainer.remove(this); 
+	this.parentContainer.remove(this);
     }
-    context.translate(0,this.index/3);
+    context.translate(0,-this.index/3);
     context.globalAlpha = 1-this.index/this.length;
     this.index++;
-    
+    context.fillStyle = "white";
+    context.fillText(this.ammount.toString(),0,0);
+    context.fillText()
 }
 var NormalAmmunition = Drawable.sub();
 NormalAmmunition.prototype._init = function(ship,target){
