@@ -23,6 +23,8 @@
 	}) 
     }
     ServerGateway.prototype.boardCast = function(msg){
+	msg.time = Static.battleField.time+5;
+	Static.battleField.addInstruction(msg);
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
 	    item.send(msg);
@@ -38,8 +40,6 @@
 	    })
 	    return;
 	}
-	msg.time = Static.battleField.time+5;
-	Static.battleField.addInstruction(msg);
 	this.boardCast(msg)
     }
     exports.ServerGateway = ServerGateway;

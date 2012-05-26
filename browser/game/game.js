@@ -11,6 +11,8 @@ Game.prototype._init = function(canvas){
     this.canvas.width = Static.settings.width
     this.canvas.height = Static.settings.height;
     this.setRate(Static.settings.rate);
+    Static.gameResourceManager = new GameResourceManager();
+    Static.gameResourceManager.load(Items);
     Static.battleField = new BattleFieldSimulator();
     Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
     console.log(Static.battleField.toData());
@@ -21,8 +23,8 @@ Game.prototype._init = function(canvas){
     })
     Static.battleField.on("initialized",function(){
 	Static.gateway.send(ProtocalGenerater.moveTo("1"
-						     ,Math.random()*500
-						     ,Math.random()*500))
+						     ,1000
+						     ,300))
     })
 }
 Game.prototype.next = function(){

@@ -4,11 +4,13 @@
     var Point = require("./util").Point;
     var Util = require("./util").Util;
     var Ship = EventEmitter.sub();
-    var AI = require("./ai").AI;    
+    var AI = require("./ai").AI;
+    var Static = require("./static").Static;
     Ship.prototype._init = function(info){
 	if(!info){
 	    return;
 	}
+	var proto = Static.gameResourceManager.get(info.itemId);
 	this.type = "ship";
 	if(info.id)
 	    this.id = info.id.toString();
@@ -19,17 +21,7 @@
 	} 
 	this.cordinates = info.cordinates?Point.Point(info.cordinates):Point.Point(0,0); 
 	this.team = info.team; 
-	this.ability = {};
-	if(info.ability){
-	    Util.update(this.ability,info.ability);
-	}
-	this.state = {}
-	if(info.state){
-	    Util.update(this.state,info.state);
-	}else{
-	    Util.update(this.state
-			,this.ability);
-	} 
+	Util.update(this,proto);
 	if(info.action){
 	    this.action = info.action;
 	}else{
@@ -41,7 +33,7 @@
 	}else{
 	    this.toward = 0;
 	}
-	this.size = 10;
+	this.itemId = info.itemId;
     }
     Ship.prototype.toData = function(){
 	var data ={
@@ -52,10 +44,9 @@
 		,y:this.cordinates.y
 	    }
 	    ,toward:this.toward
-	    //,ability:this.ability
-	    ,state:this.state
 	    ,action:this.action
 	    ,AI:this.AI.toData()
+	    ,itemId:this.itemId
 	}
 	return data;
     }
@@ -71,13 +62,13 @@
 	    console.trace();
 	    return;
 	}
-	rotateSpeed = this.state.maxRotateSpeed;
+	rotateSpeed = this.maxRotateSpeed;
 	this.toward += fix*rotateSpeed;
 	
 	this.toward = Math.mod(this.toward,Math.PI*2);
 	
 	var fix = this.action.speedFix;
-	var speed = this.state.maxSpeed;
+	var speed = this.maxSpeed;
 	//move
 	
 	this.cordinates.x+=Math.cos(this.toward) *speed*fix;

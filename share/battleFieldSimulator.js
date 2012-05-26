@@ -8,6 +8,7 @@
     var Ship = require("./ship").Ship;
     var Static = require("./static").Static;
     var OperateEnum =require("./protocol").OperateEnum; 
+    var Mine = require("./mine").Mine;
     EventEmitter.mixin(BattleFieldSimulator);
     BattleFieldSimulator.prototype._init = function(){
 	this.size = Point.Point(10000,10000);
@@ -32,10 +33,21 @@
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
 	    this.calculateUnit(item);
-	    item.position = item.cordinates;
-	    item.rotation = item.toward;
+	    if(item.type == "ship"){
+		item.position = item.cordinates;
+		item.rotation = item.toward;
+	    }
 	    //if near star gate
 	} 
+    }
+    BattleFieldSimulator.prototype.getMineById = function(id){
+	for(var i=0;i<this.parts.length;i++){
+	    var item = this.parts[i];
+	    if(item.type == "mine" && item.id == id){
+		return item;
+	    }
+	}
+	return null;
     }
     BattleFieldSimulator.prototype.applyInstruction = function(){
 	for(var i=0,length=this.instructionQueue.length;i < length;i++){
@@ -66,6 +78,9 @@
 	if(unit.type == "ship"){
 	    unit.next();
 	}
+	if(unit.type == "mine"){
+	    //console.log(unit.position.toString());
+	}
 	if(unit.type == "gate")return;
     }
     BattleFieldSimulator.prototype.getShipById = function(id){
@@ -83,13 +98,22 @@
     BattleFieldSimulator.prototype.setTime = function(time){
 	this.time = time;
     }
-    BattleFieldSimulator.prototype.initialize = function(shipsInfo){
-	
+    BattleFieldSimulator.prototype.initialize = function(shipsInfo,map){
 	this.emit("initialize");
 	this.parts.length = 0;
 	this.instructionQueue.length = 0;
 	this.initShips(shipsInfo); 
+	var mines = []; 
+	var arr = map.mines;
+	for(var i=0;i < arr.length;i++){
+	    var item = arr[i];
+	    var m = new Mine(item);
+	    mines.push(m);
+	    this.parts.push(m);
+	}
+	this.emit("mineInitialized",mines);
 	this.emit("initialized");
+	
     }
     BattleFieldSimulator.prototype.initShips = function(shipInfos){
 	var arr = shipInfos;

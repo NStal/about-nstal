@@ -24,8 +24,11 @@
 	MINING_BACK:5,//加矿
 	MAKE_SHIP:6,//造船
 	UPGRADE:7,//升级
-	SYNC:8//同步所有数据
+	SYNC:8,//同步所有数据
+	END:9,//战斗结束，某一队输了
+	DEAD:10//某个单位挂了 
     }
+    
     exports.OperateEnum = OperateEnum;
     //协议转换
     var ProtocalGenerater = {};
