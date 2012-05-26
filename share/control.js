@@ -87,6 +87,13 @@ ShipControler.prototype.getAction = function(evt){
     return 0;
 }
 function OnMouseDown(evt){
+    if(!Static.mousePosition){
+	Static.mousePosition = Point.Point(evt.layerX,evt.layerY);
+    }
+    else{
+	Static.mousePosition.x = evt.layerX;
+	Static.mousePosition.y = evt.layerY;
+    }
     Static.firstPoint = new Point(evt.layerX,evt.layerY);
     if(Static.shipController){
         if(evt.button == 0){
@@ -150,6 +157,13 @@ function OnMouseDown(evt){
 }
 
 function OnMouseMove(evt){
+    if(!Static.mousePosition){
+	Static.mousePosition = Point.Point(evt.layerX,evt.layerY);
+    }
+    else{
+	Static.mousePosition.x = evt.layerX;
+	Static.mousePosition.y = evt.layerY;
+    }
     if(evt.button == 0 && Static.isLeftDown){
         Static.isSelecting = true;
         Static.shipController.getShips(evt);

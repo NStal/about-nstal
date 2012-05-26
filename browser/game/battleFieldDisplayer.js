@@ -18,6 +18,8 @@ BattleFieldDisplayer.prototype._init = function(bfs){
 	    self.decorateMine(item);
 	}
     })
+    
+    console.log("position",this.position.toString());
 }
 BattleFieldDisplayer.prototype.initShip = function(shipInfo){
     return this.battleFieldSimulator.initShip(shipInfo);
@@ -76,9 +78,9 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	else{
 	    this.index=1;
 	}
-	if(Static.ship == this){
+	if(true){
 	    context.save();
-	    context.rotate(-this.rotation); 
+	    context.rotate(-this.rotation);
 	    //draw life
 	    context.beginPath();
 	    context.arc(0,0,this.size,0,Math.PI*2*this.life/this.maxLife);
@@ -126,9 +128,34 @@ BattleFieldDisplayer.prototype.decorateMine = function(mine){
 }
 BattleFieldDisplayer.prototype.next = function(){
     this.battleFieldSimulator.next();
-    if(Static.firstPoint){
-	
+    var padding = 50;
+    var width = Static.settings.width;
+    var height = Static.settings.height;
+    var move = Point.Point(0,0);
+    if(Static.mousePosition){
+	console.log(Static.mousePosition.toString());
+	if(Static.mousePosition.x>width-padding){
+	    move.x = -20;
+	}
+	if(Static.mousePosition.x<padding){
+	    move.x = 20;
+	} 
+	if(Static.mousePosition.y>height-padding){
+	    move.y = -20;
+	}
+	if(Static.mousePosition.y<padding){
+	    move.y = 20;
+	}
+	this.moveViewPort(move);
+	move.release();
     }
+}
+BattleFieldDisplayer.prototype.moveViewPort = function(p){
+    console.log(p.toString());
+    this.position.x += p.x;
+    this.position.y += p.y;
+    if(this.position.x>0)this.position.x=0;
+    if(this.position.y>0)this.position.y=0;
 }
 BattleFieldDisplayer.prototype.getShipByPosition = function(){
     
