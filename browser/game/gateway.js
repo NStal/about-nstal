@@ -21,6 +21,8 @@
 		Static.battleField.initialize(msg.data.ships,
 					      map);
 		Static.battleField.time = msg.time;
+		Static.userteam = msg.team;
+		Static.battleField.team = msg.allTeam;
 		return;
 	    }
 	    Static.battleField.addInstruction(msg);

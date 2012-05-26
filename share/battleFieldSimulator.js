@@ -102,9 +102,9 @@
 	this.emit("initialize");
 	this.parts.length = 0;
 	this.instructionQueue.length = 0;
-	this.initShips(shipsInfo); 
 	var mines = []; 
 	var arr = map.mines;
+	this.map = map;
 	for(var i=0;i < arr.length;i++){
 	    var item = arr[i];
 	    var m = new Mine(item);
@@ -112,6 +112,7 @@
 	    this.parts.push(m);
 	}
 	this.emit("mineInitialized",mines);
+	this.initShips(shipsInfo); 
 	this.emit("initialized");
 	
     }
@@ -127,15 +128,77 @@
 	return ships;
     }
     BattleFieldSimulator.prototype.initEnvironment = function(galaxy){
-	
     }
     BattleFieldSimulator.prototype.enterShip = function(info){
 	var ship = new Ship(info);
 	this.add(ship);
+	var self = this;
+	ship.on("dead",function(){
+	    self.emit("shipDead",ship);
+	});
+	ship.on("fire",function(target){
+	    self.emit("shipFire",ship,target);
+	}); 
+	ship.on("gain",function(mine){
+	    self.emit("shipGain",ship,mine);
+	    
+	})
 	return ship;
     }
     BattleFieldSimulator.prototype.initShip = function(ship){
 	return this.initShips([ship])[0]
+    }
+    BattleFieldSimulator.prototype.setShipDead = function(cmd){
+	var ship = this.getShipById(cmd.id);
+	if(!ship){
+	    this.emit("shipNotExist",cmd);
+	    console.log("ship not exist")
+	    console.trace();
+	    return;
+	}
+	
+	this.emit("shipIsDead",ship);
+	this.remove(ship);
+	ship.isDead = true; 
+    }
+    BattleFieldSimulator.prototype.shipGain = function(cmd){
+	var ship = this.getShipById(cmd.id);
+	if(!ship){
+	    this.emit("shipNotExist",cmd);
+	    console.log("ship not exist")
+	    console.trace();
+	    return;
+	}
+	var mine = this.getMineById(cmd.targetId)
+	if(!mine){
+	    this.emit("mineNotExist",cmd);
+	    console.log("mine not exist")
+	    console.trace();
+	    return;
+	}
+	this.emit("gained",ship,mine,cmd.ammount);
+    }
+    BattleFieldSimulator.prototype.shipMine = function(cmd){
+	var ship = this.getShipById(cmd.id);
+	if(!ship){
+	    this.emit("shipNotExist",cmd);
+	    console.log("ship not exist")
+	    console.trace();
+	    return;
+	}
+	var mine = this.getMineById(cmd.targetId)
+	if(!mine){
+	    this.emit("mineNotExist",cmd);
+	    console.log("mine not exist")
+	    console.trace();
+	    return;
+	}
+	if(ship.subType!="miningShip"){
+	    console.log("not mine ship");
+	    console.trace();
+	    return;
+	}
+	ship.AI.mineAt(mine);
     }
     BattleFieldSimulator.prototype.moveShipTo = function(cmd){
 	if(cmd.id instanceof Array){
@@ -157,7 +220,6 @@
 	for(var i=0;i<ships.length;i++){
 	    var ship = ships[i];
 	    if(ship.invalid){
-		console.error("!!");
 		console.warn("ship of id",ship.id,"not found");
 		console.trace();
 		continue;
@@ -171,10 +233,97 @@
 	    ship.AI.moveTo(cmd.position);
 	} 
     }
+    BattleFieldSimulator.prototype.doDamage = function(cmd){
+	var ship = this.getShipById(cmd.id);
+	if(!ship){
+	    this.emit("shipNotExist",cmd);
+	    console.log("ship not exist");
+	    console.trace();
+	    return;
+	}
+	ship.onDamage(cmd.damage);
+    }
+    BattleFieldSimulator.prototype.shipAttack = function(cmd){
+	var ship = this.getShipById(cmd.id);
+	if(!ship){
+	    this.emit("shipNotExist",cmd);
+	    console.log("ship not exist");
+	    console.trace();
+	    return;
+	}
+	var target = this.getShipById(cmd.targetId); 
+	if(!target){
+	    this.emit("shipNotExist",cmd);
+	    console.log("target not exist");
+	    console.trace();
+	    return;
+	}
+	ship.AI.attackAt(target);
+    } 
+    BattleFieldSimulator.prototype.aboutReady = function(instruction){
+	this.team = instruction.team;
+	this.emit("aboutReady");
+    }
+    BattleFieldSimulator.prototype.addMotherShip = function(){
+	var m0 = {
+	    id:"0"
+	    ,itemId:"0"
+	    ,cordinates:this.map.born["0"]
+	    ,team:"0"
+	}
+	var m1 = {
+	    id:"1"
+	    ,itemId:"0"
+	    ,cordinates:this.map.born["1"]
+	    ,team:"1"
+	}
+	this.initShips([m0,m1]);
+    }
+    BattleFieldSimulator.prototype.countDown = function(instruction){
+	this.emit("countDown",instruction.count);
+	if(instruction.count==0){
+	    this.addMotherShip();
+	} 
+    } 
+    BattleFieldSimulator.prototype.buildShip = function(instruction){
+	var team = instruction.team;
+	var motherShip = this.getShipById(team);
+	var info = {
+	    id:instruction.id
+	    ,itemId:instruction.itemId
+	    ,cordinates:motherShip.cordinates
+	}
+	this.initShip(info);
+	this.emit("shipBuilt",ship);
+    }
     BattleFieldSimulator.prototype._excute = function(instruction){
 	switch(instruction.cmd){
 	case OperateEnum.MOVE:
 	    this.moveShipTo(instruction)
+	    break;
+	case OperateEnum.DEAD:
+	    this.setShipDead(instruction);
+	    break;	    
+	case OperateEnum.DAMAGE:
+	    this.doDamage(instruction);
+	    break;
+	case OperateEnum.ATTACK:
+	    this.shipAttack(instruction);
+	    break;
+	case OperateEnum.MINING:
+	    this.shipMine(instruction);
+	    break;
+	case OperateEnum.GAIN:
+	    this.shipGain(instruction);
+	    break;
+	case OperateEnum.ABOUTREADY:
+	    this.aboutReady(instruction);
+	    break;
+	case OperateEnum.COUNTDOWN:
+	    this.countDown(instruction);
+	    break;
+	case OperateEnum.MAKE_SHIP:
+	    this.buildShip(instruction);
 	    break;
 	}
     }

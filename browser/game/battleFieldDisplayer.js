@@ -32,6 +32,12 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	context.closePath();
 	context.fillStyle = "black";
 	context.fill();
+	context.save()
+	context.rotate(-this.rotation);
+	context.beginPath(); 
+	context.strokeStyle="orange";
+	context.strokeText(this.life,0,0);
+	context.restore();
     }
     ship.moveTo = function(position){
 	var cmd = ProtocalGenerater.moveTo(this.id
@@ -43,11 +49,12 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 BattleFieldDisplayer.prototype.decorateMine = function(mine){
     mine.onDraw = function(context){
 	context.beginPath();
-	context.arc(0,0,20,0,Math.PI*2);
+	context.arc(0,0,this.size,0,Math.PI*2);
 	context.fillStyle = "blue";
 	context.fill();
     }
 }
+
 BattleFieldDisplayer.prototype.next = function(){
     this.battleFieldSimulator.next();
 }

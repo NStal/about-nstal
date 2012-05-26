@@ -11,6 +11,27 @@
 	this.destination = {};
     }
     AI.prototype.calculate = function(){
+	if(this.destination.target){
+	    if(this.destination.target.isDead){
+		this.destination.target = null
+	    }else{
+		if(this.ship.fireReady
+		   && this.destination.target.cordinates.distance(this.ship.cordinates)<this.ship.range){
+		    this.ship.emit("fire",this.destination.target);
+		    this.ship.coolDownIndex = 0;
+		    this.ship.fireReady = false;
+		}
+	    }
+	}
+	if(this.destination.mineTarget){
+	    if(this.ship.fireReady
+	       && this.destination.mineTarget.position.distance(this.ship.cordinates)<this.ship.range+this.destination.mineTarget.size){
+		this.ship.emit("gain",this.destination.mineTarget);
+		this.ship.coolDownIndex = 0;
+		this.ship.fireReady = false;
+	    } 
+	}
+	
 	this.ship.action.rotateFix = 0;
 	this.ship.action.speedFix = 0;
 	if(this.destination.roundRoute){
@@ -36,7 +57,7 @@
 	    return true;
 	}
 	//rotate?
-	var clockWise = 0;	
+	var clockWise = 0;
 	var rad= targetPoint.sub(ship.cordinates).rad(); 
 	if(!Math.floatEqual(rad,
 			    ship.toward)){
@@ -68,6 +89,23 @@
 	return false;
     }
     //how
+    AI.prototype.attackAt = function(target){
+	this.destination.targetPoint = target.cordinates;
+	this.destination.target = target;
+    }
+    AI.prototype.mineAt = function(target){
+	if(target.type!="mine"){
+	    console.log("target not mine");
+	    return;
+	}
+	if(this.ship.subType!="miningShip"){
+	    console.log("not mining ship");
+	    return;
+	}
+	this.roundAt(target.position,target.size+10,true);
+	this.destination.mineTarget = target;
+	
+    }
     AI.prototype._adjustRoundAtCurrentRoute = function(r,antiClockWise){
 	//set distance to default if no distance specified
 	//notion,if the rotateSpeed and current speed is not enough to

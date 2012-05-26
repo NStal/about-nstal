@@ -4,7 +4,7 @@ SyncWorker.prototype._init = function(ws){
     var self = this; 
     this.ws = ws;
     this.ws.onclose = function(){
-	self.emit("close");
+	self.emit("close",self);
 	self.over = true;
     }
 }
@@ -24,5 +24,8 @@ SyncWorker.prototype.send = function(msg){
     }
     this.ws.send(JSON.stringify(msg));
     return this;
+}
+SyncWorker.prototype.close = function(){
+    this.ws.close();
 }
 exports.SyncWorker = SyncWorker;
