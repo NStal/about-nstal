@@ -78,7 +78,7 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	else{
 	    this.index=1;
 	}
-	if(true){
+	if(this.isSelected){
 	    context.save();
 	    context.rotate(-this.rotation);
 	    //draw life
@@ -133,7 +133,6 @@ BattleFieldDisplayer.prototype.next = function(){
     var height = Static.settings.height;
     var move = Point.Point(0,0);
     if(Static.mousePosition){
-	console.log(Static.mousePosition.toString());
 	if(Static.mousePosition.x>width-padding){
 	    move.x = -20;
 	}
@@ -151,7 +150,6 @@ BattleFieldDisplayer.prototype.next = function(){
     }
 }
 BattleFieldDisplayer.prototype.moveViewPort = function(p){
-    console.log(p.toString());
     this.position.x += p.x;
     this.position.y += p.y;
     if(this.position.x>0)this.position.x=0;
