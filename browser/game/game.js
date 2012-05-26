@@ -12,6 +12,7 @@ Game.prototype._init = function(canvas){
     Static.battleField = new BattleFieldSimulator();
     Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
     Static.isShipSelect=false;
+    Static.ships = [];
     Static.shipController = new ShipControler(canvas,Static.battleField);
     Static.gateway = new Gateway();
     Static.gateway.connect();
