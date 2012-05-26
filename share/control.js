@@ -28,6 +28,7 @@ ShipControler.prototype.calcuDis = function(evt){
         var ship = this.parts[index];
         if(minDistance < ship.size*2) {
             Static.isShipSelect = true;
+            ship.isSelected = true;
             return ship;
         }
     } 
@@ -45,6 +46,7 @@ ShipControler.prototype.getShips = function(evt){
            if((item.cordinates.x>Static.firstPoint.x && item.cordinates.x<evt.layerX && item.cordinates.y>Static.firstPoint.y && item.cordinates.y<evt.layerY) || (item.cordinates.x<Static.firstPoint.x && item.cordinates.x>evt.layerX && item.cordinates.y>Static.firstPoint.y && item.cordinates.y<evt.layerY) ){
                 console.log(item.name+"is in");
                 Static.isShipSelect = true;
+                item.isSelected = true;
                 Static.ships.push(item);
             }   
         }
@@ -102,11 +104,13 @@ function OnMouseDown(evt){
             var ship = Static.shipController.calcuDis(evt);
             if(ship){
                 console.log(evt.layerX+"|"+evt.layerY); 
-                Static.ships = [];
+                //Static.ships = [];
+                emptySelectShips(Static.ships);
                 Static.ships.push(ship);
             }else{
                 Static.isShipSelect = false;
-                Static.ships = [];
+                //Static.ships = [];
+                emptySelectShips(Static.ships);
             }
         }else if(evt.button == 2 && Static.isShipSelect){
                 var type = Static.shipController.getAction(evt);
@@ -183,4 +187,11 @@ function OnMouseUp(evt){
         Static.isSelecting = false;
         Static.isMoving = false;
     }
+}
+
+function emptySelectShips(ships){
+    for(var i=0;i<ships.length;i++){
+        ships[i].isSelected = false;
+    }
+    ships.length = 0;
 }
