@@ -34,9 +34,5 @@ Main.prototype.startGame = function(){
     Static.resourceDisplayer = new ResourceDisplayer();
     $("body").append(Static.resourceDisplayer.nodeJ);
     Static.popContainer = new PopContainer(document.getElementById("popContainer"));
-<<<<<<< HEAD
     document.getElementById("screen").oncontextmenu = function(){return false;}
-=======
-	
->>>>>>> 90199ae5329379e330261c8c7d0130a103f0295c
 }
