@@ -24,6 +24,9 @@
 		Static.battleField.teamInfo = msg.teamInfo;
 		Static.battleField.initialize(msg.data.ships,
 					      map);
+		if(msg.ready){
+		    Static.waitPage.hide();
+		}
 		return;
 	    }
 	    Static.battleField.addInstruction(msg);

@@ -25,12 +25,15 @@ ShipBuildList.prototype.toggle = function(){
 }
 ShipBuildListItem = Class.sub();
 ShipBuildListItem.prototype._init = function(itemId){
-    var template = "<div class='item'></div>";
+    var template = "<div class='item'><div id='name'></div><div id='consume'></div><img id='pic'></img></div>";
     Widget.call(this,template);
     this.itemId = itemId;
     this.proto = Static.gameResourceManager.get(itemId);
     this.name = this.proto.name;
-    this.nodeJ.text(this.name); 
+    var img = Static.resourceLoader.getForce(this.proto.src);
+    this.nameJ.text(this.name);
+    this.picJ.attr("src",img.src);
+    this.consumeJ.text(this.proto.consume.mine);
     var self = this;
     this.nodeJ.click(function(){
 	Static.gateway.send({

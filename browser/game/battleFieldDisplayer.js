@@ -137,16 +137,16 @@ BattleFieldDisplayer.prototype.next = function(){
     var move = Point.Point(0,0);
     if(Static.mousePosition){
 	if(Static.mousePosition.x>width-padding){
-	    move.x = -20;
+	    move.x = -40;
 	}
 	if(Static.mousePosition.x<padding){
-	    move.x = 20;
+	    move.x = 40;
 	} 
 	if(Static.mousePosition.y>height-padding){
-	    move.y = -20;
+	    move.y = -40;
 	}
 	if(Static.mousePosition.y<padding){
-	    move.y = 20;
+	    move.y = 40;
 	}
 	this.moveViewPort(move);
 	move.release();

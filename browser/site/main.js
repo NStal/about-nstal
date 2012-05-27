@@ -70,8 +70,9 @@ Main.prototype.startGame = function(){
     $("body").append(Static.shipBuildList.nodeJ);
     Static.countDownPage = new CountDownPage();
     $("body").append(Static.countDownPage.nodeJ); 
-    document.getElementById("screen").oncontextmenu = function(){return false;}
+    $(document)[0].oncontextmenu = function(){
+	return false;
+    }
     Static.resultPage = new ResultPage();
-    $("body").append(Static.resultPage.nodeJ);
-    
+    $("body").append(Static.resultPage.nodeJ); 
 }
