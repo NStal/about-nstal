@@ -1,9 +1,11 @@
 var BattleFieldDisplayer = Drawable.sub();
 BattleFieldDisplayer.prototype._init = function(bfs){
+    this.viewPort = Point.Point(this.position);
     this.battleFieldSimulator = bfs; 
     //so we can call this.draw(context);
     this.parts = this.battleFieldSimulator.parts;
     var self = this;
+    this.size = this.battleFieldSimulator.size;
     this.battleFieldSimulator.on("shipInitialized",function(ships){
 	var tempArr = ships;
 	for(var i=0,length=tempArr.length;i < length;i++){
@@ -45,7 +47,7 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	var size = this.size; 
 	if(!this.shake){
 	    this.shake = new Shake({
-		time:120
+		time:120+10*Math.random()
 		,range:5
 		,angle:90
 	    });
@@ -54,17 +56,13 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	}
 	if(this.img){
 	    context.save();
-	    context.globalAlpha = 0.8;
+	    context.globalAlpha = 0.9;
 	    context.shadowBlur = 3;
 	    context.rotate(Math.PI/2); 
 	    context.drawImage(this.img,-this.img.width/2,-this.img.height/2,this.img.width,this.img.height);
 	    context.restore();
 	}else{
 	    this.img = Static.resourceLoader.get(this.src);
-	    if(this.img){
-		this.img.width = 40;
-		this.img.height= 53;
-	    }
 	    context.moveTo(-size/2,-size/3);
 	    context.lineTo(size/2,0);
 	    context.lineTo(-size/2,size/3);
@@ -131,6 +129,7 @@ BattleFieldDisplayer.prototype.decorateMine = function(mine){
     }
 }
 BattleFieldDisplayer.prototype.next = function(){
+    this.graduallyMove();
     this.battleFieldSimulator.next();
     var padding = 50;
     var width = Static.settings.width;
@@ -154,10 +153,46 @@ BattleFieldDisplayer.prototype.next = function(){
     }
 }
 BattleFieldDisplayer.prototype.moveViewPort = function(p){
-    this.position.x += p.x;
-    this.position.y += p.y;
-    if(this.position.x>0)this.position.x=0;
-    if(this.position.y>0)this.position.y=0;
+    this.viewPort.x += p.x;
+    this.viewPort.y += p.y;
+    if(this.viewPort.x>0)this.viewPort.x=0;
+    if(this.viewPort.y>0)this.viewPort.y=0;
+}
+BattleFieldDisplayer.prototype.setViewPortTo = function(p){
+    
+    var settings = Static.settings;
+    this.viewPort.x = -p.x+settings.width/2;
+    this.viewPort.y = -p.y+settings.height/2;
+}
+BattleFieldDisplayer.prototype.graduallyMove = function(){
+    
+    var settings = Static.settings;
+    var min = 5;
+    var targetX = this.viewPort.x;
+    var targetY = this.viewPort.y;
+    if(Math.abs(targetX-this.position.x)<min){
+	this.position.x = targetX;
+    }else{
+	this.position.x += (targetX-this.position.x)*1/2;
+    } 
+    //not directly set,move it;
+    if(Math.abs(targetY-this.position.y)<min){
+	this.position.y = targetY;
+    }else{
+	this.position.y += (targetY-this.position.y)*1/2;
+    }
+    if(this.position.x>0){
+	this.position.x=0;
+    }
+    if(this.position.y>0){
+	this.position.y=0;
+    }
+    if(this.position.x<=(-this.size.x+settings.width)){
+	this.position.x = (-this.size.x+settings.width);
+    } 
+    if(this.position.y<=(-this.size.y+settings.height)){
+	this.position.y = (-this.size.y+settings.height);
+    }
 }
 BattleFieldDisplayer.prototype.screenToBattleField = function(p){
     p.x -= this.position.x;

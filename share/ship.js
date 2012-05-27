@@ -89,9 +89,11 @@
 	var fix = this.action.speedFix;
 	var speed = this.maxSpeed;
 	//move
-	
-	this.cordinates.x+=Math.cos(this.toward) *speed*fix;
-	this.cordinates.y+=Math.sin(this.toward) *speed*fix;
+	var realSpeed = speed*fix;
+	if(typeof this.minSpeed == "number" && realSpeed<this.minSpeed)
+	    realSpeed = this.minSpeed;
+	this.cordinates.x+=Math.cos(this.toward) *realSpeed;
+	this.cordinates.y+=Math.sin(this.toward) *realSpeed;
 	this.action.speedFix = 0;
 	this.action.rotateFix = 0;
     } 

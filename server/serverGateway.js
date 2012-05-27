@@ -8,6 +8,9 @@
     var ServerGateway = Container.sub();
     EventEmitter.mixin(ServerGateway)
     ServerGateway.prototype._init = function(){
+	Static.battleField.on("end",function(){
+	    Static.team = {};
+	})
     }
     ServerGateway.prototype.onConnect = function(worker){
 	console.log("connection");
@@ -19,7 +22,7 @@
 	    })
 	    worker.close();
 	    return;
-	}
+	} 
 	console.log("worker count",this.parts.length);
 	worker.on("close",function(worker){
 	    self.remove(worker)
@@ -34,6 +37,7 @@
     }
     ServerGateway.prototype.boardCast = function(msg){
 	msg.time = Static.battleField.time+5;
+	console.log("board cast",msg);
 	Static.battleField.addInstruction(msg);
 	for(var i=0;i<this.parts.length;i++){
 	    var item = this.parts[i];
@@ -42,6 +46,7 @@
     }
     ServerGateway.prototype.onMessage = function(msg,who){
 	//sync
+	
 	if(msg.cmd==OperateEnum.SYNC){
 	    if(!msg.username){
 		console.warn("sync without username");

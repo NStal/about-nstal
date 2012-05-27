@@ -69,5 +69,7 @@ Main.prototype.startGame = function(){
     Static.countDownPage = new CountDownPage();
     $("body").append(Static.countDownPage.nodeJ); 
     document.getElementById("screen").oncontextmenu = function(){return false;}
+    Static.resultPage = new ResultPage();
+    $("body").append(Static.resultPage.nodeJ);
     
 }

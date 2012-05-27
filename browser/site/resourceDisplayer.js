@@ -6,12 +6,15 @@ ResourceDisplayer.prototype._init = function(){
     var self = this;
     Static.battleField.on("gained",function(ship,mine,ammount){
 	if(ship.team==Static.userteam){
-	    console.error(ship.team,Static.userteam);
 	    self.gain("mine",ammount);
 	}
     })
     Static.battleField.on("initialized",function(){
 	self.setResource("mine",Static.battleField.teamInfo[Static.userteam].mine); 
+    });
+    Static.battleField.on("consume",function(type,ammount,team){
+	if(team==Static.userteam)
+	    self.reduce(type,ammount);
     });
 }
 ResourceDisplayer.prototype.setResource = function(type,count){

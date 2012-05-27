@@ -62,6 +62,10 @@
 	if(ship.cordinates.distance(targetPoint)<size){
 	    return true;
 	}
+	if(ship.AI.destination.target 
+	  && ship.cordinates.distance(targetPoint)<ship.range*4/5){
+	    return true;
+	}
 	//rotate?
 	var clockWise = 0;
 	var rad= targetPoint.sub(ship.cordinates).rad(); 

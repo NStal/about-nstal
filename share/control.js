@@ -17,6 +17,7 @@ ShipControler.prototype._init = function(canvas,bfs){
     this.battleFieldSimulator = bfs;
     this.parts = this.battleFieldSimulator.parts;
     Static.ships = [];
+    
 }
 ShipControler.prototype.parseEvent = function(e){
     return e;
@@ -49,10 +50,12 @@ ShipControler.prototype.onMouseDown = function(e){
 ShipControler.prototype.onDraw = function(context){
     if(this.p1 && this.p2){
 	context.beginPath();
+	context.globalAlpha = 0.5;
 	context.rect(this.p1.x,this.p1.y
 		     ,this.p2.x-this.p1.x
 		     ,this.p2.y-this.p1.y);
-	context.fill();
+	context.fill(); 
+	context.globalAlpha = 1;
     }
 }
 ShipControler.prototype.eventToPoint = function(e){
@@ -129,6 +132,10 @@ ShipControler.prototype.onRightClick = function(){
     Static.battleFieldDisplayer.screenToBattleField(p);
     var ship = Static.battleFieldDisplayer.getShipByPosition(p); 
     var tempArr = Static.ships;
+    var hint = new RightClickHint();
+    hint.position.x = p.x;
+    hint.position.y = p.y;
+    Static.interactionManager.add(hint);
     if(ship && ship.team!=Static.userteam){
 	//attack
 	for(var i=0,length=tempArr.length;i < length;i++){
@@ -204,4 +211,20 @@ ShipControler.prototype.getShipsByRect = function(p1,p2){
 ShipControler.prototype.isShipInRect = function(ship,p1,p2){
     var p = ship.cordinates;
     return (p1.x-p.x)*(p2.x-p.x)<0 && (p1.y-p.y)*(p2.y-p.y)<0;
+}
+var RightClickHint = Drawable.sub();
+RightClickHint.prototype._init = function(){
+    this.index = 0;
+    this.length = 10;
+    this.r = 10;
+}
+RightClickHint.prototype.onDraw = function(context){
+    if(this.index == this.length){
+	this.parentContainer.remove(this);
+    }
+    context.beginPath();
+    context.arc(0,0,this.r-this.index,0,Math.PI*2);
+    context.fillStyle = "green";
+    context.fill();
+    this.index++;
 }

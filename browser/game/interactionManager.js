@@ -1,17 +1,36 @@
 var InteractionManager = Drawable.sub();
 InteractionManager.prototype._init = function(){
     var self = this;
+    this.followMotherShip = true;
     Static.battleField.on("shipFire",function(ship,target){
 	var Ammor = Ammunition[ship.subType];
 	var ammor = new Ammor(ship,target);
 	self.add(ammor);
-	console.error("~~~~");
     })
     Static.battleField.on("gained",function(ship,mine,ammount){
-	self.add(new EarnAnimation(ship,mine,ammount));
+	if(ship.team == Static.userteam)
+	    self.add(new EarnAnimation(ship,mine,ammount));
     });
+    Static.battleField.on("countDown",function(count){
+	if(count == 0){
+	    var motherShip = Static.battleField.getShipById(Static.userteam);
+	    if(!motherShip)return;
+	    Static.battleFieldDisplayer.setViewPortTo(motherShip.cordinates);
+	}
+    });
+    Static.battleField.on("shipInitialized",function(){
+	var motherShip = Static.battleField.getShipById(Static.userteam);
+	if(!motherShip)return;
+	Static.battleFieldDisplayer.setViewPortTo(motherShip.cordinates);
+	self.motherShip = motherShip
+    });
+    this.position = Static.battleFieldDisplayer.position;
 }
-
+InteractionManager.prototype.onDraw = function(context){
+    if(this.followMotherShip && this.motherShip){
+	Static.battleFieldDisplayer.setViewPortTo(this.motherShip.cordinates);
+    }
+}
 var EarnAnimation = Drawable.sub()
 EarnAnimation.prototype._init = function(ship,mine,ammount){
     this.mine = mine;
@@ -28,8 +47,9 @@ EarnAnimation.prototype.onDraw = function(context){
     context.globalAlpha = 1-this.index/this.length;
     this.index++;
     context.fillStyle = "white";
-    context.fillText(this.ammount.toString(),0,0);
-    context.fillText()
+    context.beginPath();
+    context.font="18px";
+    context.fillText("+"+this.ammount.toString(),0,0);
 }
 var NormalAmmunition = Drawable.sub();
 NormalAmmunition.prototype._init = function(ship,target){

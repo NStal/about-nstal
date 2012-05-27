@@ -2,7 +2,7 @@ var ShipBuildList = Class.sub();
 ShipBuildList.prototype._init = function(){
     Widget.call(this,Static.template.shipBuildList);
     this.setTitle("Ship Builder");
-    var items = [0,1,2,3];
+    var items = [1,2,3,4,5];
     for(var i=0;i<items.length;i++){
 	this.contentJ.append(new ShipBuildListItem(items[i]).nodeJ);
     }

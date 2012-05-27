@@ -28,6 +28,7 @@
 	    }
 	    Static.battleField.addInstruction(msg);
 	})
+	
     }
     Gateway.prototype.connect = function(){
 	this.connector.start();

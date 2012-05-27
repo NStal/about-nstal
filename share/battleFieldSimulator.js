@@ -19,9 +19,10 @@
     BattleFieldSimulator.prototype.initTeamInfo = function(){
 	this.teamInfo = {
 	    0:{
-		mine:0
+		mine:2000
 	    },1:{
-		mine:0
+		mine:2000
+
 	    }}
     }
     BattleFieldSimulator.prototype.toData = function(){
@@ -61,6 +62,10 @@
     BattleFieldSimulator.prototype.applyInstruction = function(){
 	for(var i=0,length=this.instructionQueue.length;i < length;i++){
 	    var item = this.instructionQueue[i];
+	    if(!item){
+		console.error(item,i,length);
+		return;
+	    }
 	    if(item.time<this.time){
 		console.error("recieve oudated instruction current"
 			      ,this.time
@@ -102,6 +107,10 @@
 	return null;
     }
     BattleFieldSimulator.prototype.addInstruction = function(instruction){
+	if(!instruction){
+	    console.trace();
+	    return;
+	}
 	this.instructionQueue.push(instruction); 
     }
     BattleFieldSimulator.prototype.setTime = function(time){
@@ -300,6 +309,17 @@
     BattleFieldSimulator.prototype.makeShip = function(instruction){
 	var team = instruction.team;
 	var itemId = instruction.itemId;
+	var proto = Static.gameResourceManager.get(itemId);
+	if(!proto || !proto.consume){
+	    console.error("not this proto or consume");
+	}
+	var mine = proto.consume.mine;
+	if(this.teamInfo[team].mine>=mine){
+	    this.teamInfo[team].mine-=mine;
+	    this.emit("consume","mine",proto.consume.mine,team);
+	}else{
+	    return;
+	}
 	this.emit("makeShip",{
 	    team:team
 	    ,itemId:itemId
@@ -318,7 +338,7 @@
 	this.emit("shipBuilt",ship);
     }
     BattleFieldSimulator.prototype.end = function(instruction){
-	this.emit("end");
+	this.emit("end",instruction.lost);
     }
     BattleFieldSimulator.prototype._excute = function(instruction){
 	switch(instruction.cmd){

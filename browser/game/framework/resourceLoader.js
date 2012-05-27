@@ -53,6 +53,10 @@
 	    }
 	    var rc = new RC(item[2]); 
 	    rc.src = item[2];
+	    if(item[3]){
+		rc.width = item[3];
+		rc.height = item[4];
+	    }
 	    //rc.autoplay = true;
 	    if(RC.noOnLoad){
 		self.loadedResources.push(item);

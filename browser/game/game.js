@@ -40,8 +40,12 @@ Game.prototype.next = function(){
     //console.log(Static.battleField.time);
 }
 Game.prototype.solveKeyEvent = function(){
-    if(Static.KEYS[Key.alt]&&Static.KEYS[Key.b]){
+    if(Static.KEYS[Key.b]){
 	Static.KEYS[Key.b] = false;
 	Static.shipBuildList.toggle();
+    }    
+    if(Static.KEYS[Key.f]){
+	Static.KEYS[Key.f] = false;
+	Static.interactionManager.followMotherShip = !Static.interactionManager.followMotherShip;
     }
 }
