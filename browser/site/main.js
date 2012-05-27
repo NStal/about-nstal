@@ -44,7 +44,9 @@ Main.prototype.init = function(){
 	    alert("fail mo get data");
 	}
 	Static.template = rsp.data;
-	Static.loginPage = new LoginPage(document.getElementById("loginPage"));
+	Static.waitPage = new WaitPage();
+    $("body").append(Static.waitPage.nodeJ);
+    Static.loginPage = new LoginPage(document.getElementById("loginPage"));
 	if(window.location.hash=="#debug"){
 	    Static.loginPage.usernameJ.val("nstal");
 	    Static.loginPage.onClickConfirm();
