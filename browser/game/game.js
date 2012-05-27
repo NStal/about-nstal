@@ -11,6 +11,7 @@ Game.prototype._init = function(canvas){
     Static.gameResourceManager.load(Items);
     Static.battleField = new BattleFieldSimulator();
     Static.battleFieldDisplayer = new BattleFieldDisplayer(Static.battleField); 
+    Static.smallMap = new SmallMapLayer(Static.battleField);
     Static.isShipSelect=false;
     Static.ships = [];
     Static.shipController = new ShipControler(canvas,Static.battleField);
@@ -36,6 +37,7 @@ Game.prototype.next = function(){
     Static.shipController.next();
     Static.shipController.onDraw(context);
     Static.interactionManager.draw(context);
+    Static.smallMap.onDraw(context);
     this.solveKeyEvent();
     //console.log(Static.battleField.time);
 }
