@@ -12,7 +12,7 @@
     EventEmitter.mixin(BattleFieldSimulator);
     BattleFieldSimulator.prototype._init = function(){
 	this.size = Point.Point(3000,3000);
-	this.instructionQueue = []; 
+	this.instructionQueue = [];
 	this.time = 0;
 	this.initTeamInfo();
     }
@@ -263,13 +263,12 @@
 	ship.onDamage(cmd.damage);
     }
     BattleFieldSimulator.prototype.shipAttack = function(cmd){
-	var ship = this.getShipById(cmd.id);
-	if(!ship){
-	    this.emit("shipNotExist",cmd);
-	    console.log("ship not exist");
-	    console.trace();
-	    return;
+	if(cmd.id instanceof Array){
+	    shipIds = cmd.id;
+	}else{
+	    shipIds = [cmd.id]
 	}
+	
 	var target = this.getShipById(cmd.targetId); 
 	if(!target){
 	    this.emit("shipNotExist",cmd);
@@ -277,7 +276,17 @@
 	    console.trace();
 	    return;
 	}
-	ship.AI.attackAt(target);
+	for(var i=0;i<shipIds.length;i++){
+	    var id = shipIds[i]
+	    var ship = this.getShipById(id);
+	    if(!ship){
+		this.emit("shipNotExist",cmd);
+		console.log("ship not exist");
+		console.trace();
+		continue;
+	    }
+	    ship.AI.attackAt(target);
+	}
     } 
     BattleFieldSimulator.prototype.aboutReady = function(instruction){
 	this.team = instruction.team;
@@ -328,6 +337,7 @@
     BattleFieldSimulator.prototype.createShip = function(instruction){
 	var team = instruction.team;
 	var motherShip = this.getShipById(team);
+	if(!motherShip)return;
 	var info = {
 	    id:instruction.id
 	    ,itemId:instruction.itemId
@@ -343,7 +353,7 @@
     BattleFieldSimulator.prototype._excute = function(instruction){
 	switch(instruction.cmd){
 	case OperateEnum.MOVE:
-	    this.moveShipTo(instruction)
+	    this.moveShipTo(instruction);
 	    break;
 	case OperateEnum.DEAD:
 	    this.setShipDead(instruction);

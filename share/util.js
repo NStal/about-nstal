@@ -154,7 +154,7 @@
 	this.failDelay = 10*1000;
     }
     Instance.toggleDebug = function(){
-	Instance.debug = !Instance.debug;
+	Instance.debug = true;
     }
     Instance.prototype.start = function(type){
 	if(!type){

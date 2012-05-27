@@ -131,7 +131,7 @@ BattleFieldDisplayer.prototype.decorateMine = function(mine){
 BattleFieldDisplayer.prototype.next = function(){
     this.graduallyMove();
     this.battleFieldSimulator.next();
-    var padding = 50;
+    var padding = 80;
     var width = Static.settings.width;
     var height = Static.settings.height;
     var move = Point.Point(0,0);
@@ -158,8 +158,7 @@ BattleFieldDisplayer.prototype.moveViewPort = function(p){
     if(this.viewPort.x>0)this.viewPort.x=0;
     if(this.viewPort.y>0)this.viewPort.y=0;
 }
-BattleFieldDisplayer.prototype.setViewPortTo = function(p){
-    
+BattleFieldDisplayer.prototype.setViewPortTo = function(p){    
     var settings = Static.settings;
     this.viewPort.x = -p.x+settings.width/2;
     this.viewPort.y = -p.y+settings.height/2;

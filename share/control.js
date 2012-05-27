@@ -54,7 +54,8 @@ ShipControler.prototype.onDraw = function(context){
 	context.rect(this.p1.x,this.p1.y
 		     ,this.p2.x-this.p1.x
 		     ,this.p2.y-this.p1.y);
-	context.fill(); 
+	context.fillStyle = "black";
+	context.fill();
 	context.globalAlpha = 1;
     }
 }
@@ -138,27 +139,21 @@ ShipControler.prototype.onRightClick = function(){
     Static.interactionManager.add(hint);
     if(ship && ship.team!=Static.userteam){
 	//attack
+	var attackShips = []
 	for(var i=0,length=tempArr.length;i < length;i++){
 	    var item = tempArr[i];
 	    if(item.team!=Static.userteam)return;
 	    if(item.type!="ship")return;
 	    if(item.subType == "motherShip" 
 	       ||item.subType == "attackShip"){
-		console.log(item.subType);
-		Static.gateway.send({
-		    cmd:OperateEnum.ATTACK
-		    ,id:item.id
-		    ,targetId:ship.id
-		})
+		attackShips.push(item.id);
 	    }
-	    if(item.subType == "miningShip"){
-		Static.gateway.send({
-		    cmd:OperateEnum.MOVE
-		    ,id:item.id
-		    ,position:ship.cordinates
-		})
-	    }
-	}
+	} 
+	Static.gateway.send({
+	    cmd:OperateEnum.ATTACK
+	    ,id:attackShips
+	    ,targetId:ship.id
+	})
 	return;
     }
     var mine = Static.battleFieldDisplayer.getMineByPosition(p);
@@ -179,16 +174,19 @@ ShipControler.prototype.onRightClick = function(){
     }
     if(Static.ships.length>0){
 	//normal move
+	var shipIds = [];
 	for(var i=0,length=tempArr.length;i < length;i++){
 	    var item = tempArr[i];
 	    if(item.team!=Static.userteam)return;
 	    if(item.type!="ship")return;
-	    Static.gateway.send({
-		cmd:OperateEnum.MOVE
-		,id:item.id
-		,position:p
-	    })
+	    shipIds.push(item.id);
 	}
+	Static.gateway.send({
+	    cmd:OperateEnum.MOVE
+	    ,id:shipIds
+	    ,position:p
+	    
+	})
     }
 }
 ShipControler.prototype.onRect = function(p1,p2){

@@ -13,6 +13,7 @@
 	    ,itemId:"2"
 	}
     }
+    Static.settings = require("../localshare/settings").settings;
     ServerWorld.prototype._init = function(){
 	Static.battleField = new BattleFieldSimulator();
 	Static.gateway = new ServerGateway();

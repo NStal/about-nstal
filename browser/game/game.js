@@ -50,4 +50,11 @@ Game.prototype.solveKeyEvent = function(){
 	Static.KEYS[Key.f] = false;
 	Static.interactionManager.followMotherShip = !Static.interactionManager.followMotherShip;
     }
+    if(Static.KEYS[Key.a]){
+	Static.KEYS[Key.a] = false;
+	var tempArr = Static.ships;
+	for(var i=0,length=tempArr.length;i < length;i++){
+	    var item = tempArr[i];
+	}
+    }
 }

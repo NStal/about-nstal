@@ -20,7 +20,7 @@ Static.settings = {
     height:800
     ,width:1280
     ,rate:30
-    ,host:"127.0.0.1"
+    ,host:"10.42.43.1"
     ,port:10000
 }
 Static.checkSize = function(){

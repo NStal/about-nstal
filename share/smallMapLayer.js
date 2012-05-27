@@ -17,7 +17,6 @@ SmallMapLayer.prototype.onDraw = function(context){
         item = this.parts[i];
         if(item.type == "ship"){
             context.beginPath();
-            console.log(item);
             context.arc(item.cordinates.x/this._scale,item.cordinates.y/this._scale+26,item.size/this._scale,0,2*Math.PI,false);
             if(item.team == Static.userteam){
                 context.fillStyle = "green";

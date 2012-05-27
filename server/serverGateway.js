@@ -36,7 +36,7 @@
 	this.add(worker);
     }
     ServerGateway.prototype.boardCast = function(msg){
-	msg.time = Static.battleField.time+5;
+	msg.time = Static.battleField.time+10;
 	console.log("board cast",msg);
 	Static.battleField.addInstruction(msg);
 	for(var i=0;i<this.parts.length;i++){
@@ -45,8 +45,7 @@
 	}
     }
     ServerGateway.prototype.onMessage = function(msg,who){
-	//sync
-	
+	//sync 
 	if(msg.cmd==OperateEnum.SYNC){
 	    if(!msg.username){
 		console.warn("sync without username");
