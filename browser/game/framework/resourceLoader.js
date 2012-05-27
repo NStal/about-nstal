@@ -6,6 +6,7 @@
 	this.isLoading = false;
 	this.ready = false;
 	this.resources = [];
+	this.parsedResources =  [];
 	this.loadedResources = [];
     }
     ResourceLoader.prototype.add = function(resource){
@@ -52,11 +53,13 @@
 		continue;
 	    }
 	    var rc = new RC(item[2]); 
+	    rc.name = item[0];
 	    rc.src = item[2];
 	    if(item[3]){
 		rc.width = item[3];
 		rc.height = item[4];
 	    }
+	    this.parsedResources.push(rc);
 	    //rc.autoplay = true;
 	    if(RC.noOnLoad){
 		self.loadedResources.push(item);
@@ -77,6 +80,16 @@
 		}
 	    })(item,rc) 
 	}
+    }
+    ResourceLoader.prototype.getForce = function(rcName){
+	for(var i=0,length=this.parsedResources.length;i < length;i++){
+	    var item = this.parsedResources[i];
+	    if(item.name==rcName){
+		return item;
+	    }
+	}
+	console.warn("resource not found",rcName);
+	return null;
     }
     ResourceLoader.prototype.get = function(rcName){
 	if(!this.ready){
