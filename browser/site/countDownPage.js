@@ -6,13 +6,15 @@ CountDownPage.prototype._init = function(){
     if(count!=0){
         Static.waitPage.hide();
 	    self.show(count);
-	}else{
+	    if(count == 1){
+            $("#openDoor").css({'display':'block'});
+	        $("#upDoor").animate({height:'0%',top:'0px'},1000);
+	        $("#downDoor").animate({height:'0%',bottom:'0px'},1000,function(){
+	         $("#openDoor").css({'display':'none'});
+        });
+        }
+    }else{
 	    self.hide();
-	    $("#openDoor").css({'display':'block'});
-	    $("#upDoor").animate({height:'0%',top:'0px'},1000);
-	    $("#downDoor").animate({height:'0%',bottom:'0px'},1000,function(){
-	    $("#openDoor").css({'display':'none'});
-	    });
 	}
     })
 }
