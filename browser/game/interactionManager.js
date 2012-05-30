@@ -4,6 +4,7 @@ InteractionManager.prototype._init = function(){
     this.followMotherShip = true;
     Static.battleField.on("shipFire",function(ship,target){
 	var Ammor = Ammunition[ship.subType];
+	if(!Ammor)return;
 	var ammor = new Ammor(ship,target);
 	self.add(ammor);
     })
@@ -18,10 +19,14 @@ InteractionManager.prototype._init = function(){
 	    Static.battleFieldDisplayer.setViewPortTo(motherShip.cordinates);
 	}
     });
-    Static.battleField.on("shipInitialized",function(){
+    Static.battleField.on("start",function(){
 	var motherShip = Static.battleField.getShipById(Static.userteam);
 	if(!motherShip)return;
 	Static.battleFieldDisplayer.setViewPortTo(motherShip.cordinates);
+    })
+    Static.battleField.on("shipInitialized",function(){
+	var motherShip = Static.battleField.getShipById(Static.userteam);
+	if(!motherShip)return;
 	self.motherShip = motherShip
     });
     this.position = Static.battleFieldDisplayer.position;
@@ -80,4 +85,5 @@ var Ammunition = {
     "motherShip":NormalAmmunition
     ,"attackShip":NormalAmmunition
     ,"defenceTower":NormalAmmunition
+    ,"repairShip":NormalAmmunition
 }

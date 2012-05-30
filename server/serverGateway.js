@@ -11,6 +11,7 @@
 	Static.battleField.on("end",function(){
 	    Static.team = {};
 	})
+	this.delay = 5;
     }
     ServerGateway.prototype.onConnect = function(worker){
 	console.log("connection");
@@ -36,7 +37,7 @@
 	this.add(worker);
     }
     ServerGateway.prototype.boardCast = function(msg){
-	msg.time = Static.battleField.time+10;
+	msg.time = Static.battleField.time+this.delay;
 	console.log("board cast",msg);
 	Static.battleField.addInstruction(msg);
 	for(var i=0;i<this.parts.length;i++){
@@ -46,6 +47,11 @@
     }
     ServerGateway.prototype.onMessage = function(msg,who){
 	//sync 
+	if(msg.cmd==OperateEnum.CHAT && who.username){
+	    msg.username = who.username;
+	    this.boardCast(msg);
+	    return;
+	}
 	if(msg.cmd==OperateEnum.SYNC){
 	    if(!msg.username){
 		console.warn("sync without username");
@@ -57,7 +63,7 @@
 	    var team = null;
 	    var notReady;
 	    var aboutToReady;
-	    if(!Static.team[0]||!Static.team[1]){
+	    if(!Static.team[0] || !Static.team[1]){
 		notReady = true;
 	    }
 	    if(!Static.team[0] ||  Static.team[0]==msg.username){
@@ -75,6 +81,8 @@
 		this.emit("aboutToReady");
 	    }
 	    if(team){
+		who.team = team;
+		who.username = msg.username;
 		who.send({
 		    cmd:OperateEnum.SYNC
 		    ,data:Static.battleField.toData()
@@ -89,6 +97,7 @@
 	    }
 	    return;
 	}
+	msg.team = who.team;
 	this.boardCast(msg)
     }
     exports.ServerGateway = ServerGateway;

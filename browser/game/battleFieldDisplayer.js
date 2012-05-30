@@ -20,6 +20,13 @@ BattleFieldDisplayer.prototype._init = function(bfs){
 	    self.decorateMine(item);
 	}
     })
+    this.battleFieldSimulator.on("shipInitialized",function(ships){
+	var tempArr = ships;
+	for(var i=0,length=tempArr.length;i < length;i++){
+	    var item = tempArr[i];
+	    self.decorateShip(item);
+	}
+    })
     
     console.log("position",this.position.toString());
 }
@@ -42,7 +49,9 @@ BattleFieldDisplayer.prototype.onDraw = function(context){
     }
 }
 BattleFieldDisplayer.prototype.decorateShip =function(ship){
+    var self = this;
     ship.onDraw = function(context){
+	if(!self.pointInScreen(this.position,this.size))return;
 	context.beginPath();
 	var size = this.size; 
 	if(!this.shake){
@@ -93,12 +102,11 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 	    //draw selection
 	    context.beginPath();
 	    context.arc(0,0,this.size+8,0,Math.PI*2-1);
-	    context.strokeStyle = "black";
+	    context.strokeStyle = "#0bf";
 	    context.stroke(); 
 	    context.rotate(-this.index/2); 
 	    context.beginPath();
 	    context.arc(0,0,this.size+4,0,Math.PI*2-1);
-	    context.strokeStyle = "black";
 	    context.stroke();
 	} 
 	context.restore();
@@ -113,8 +121,9 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
 BattleFieldDisplayer.prototype.decorateMine = function(mine){
     mine.lineColor = "#009cff";
     mine.fillColor = "#00b4ff";
+    var self = this;
     mine.onDraw = function(context){
-	
+	if(!self.pointInScreen(this.position,this.size))return;
 	context.beginPath();
 	
 	context.arc(0,0,this.size,0,Math.PI*2);
@@ -131,7 +140,7 @@ BattleFieldDisplayer.prototype.decorateMine = function(mine){
 BattleFieldDisplayer.prototype.next = function(){
     this.graduallyMove();
     this.battleFieldSimulator.next();
-    var padding = 80;
+    var padding = 150;
     var width = Static.settings.width;
     var height = Static.settings.height;
     var move = Point.Point(0,0);
@@ -227,4 +236,10 @@ BattleFieldDisplayer.prototype.getMineByPosition = function(position){
 	}
     }
     return mine;
+}
+BattleFieldDisplayer.prototype.pointInScreen = function(p,size){
+    if(!size)size = 0;
+    var settings = Static.settings;
+    return ((-this.position.x-size-p.x)*(-this.position.x+settings.width-p.x+size)<=0
+	    &&(-this.position.y-p.y-size)*(-this.position.y+settings.height-p.y+size)<=0)
 }

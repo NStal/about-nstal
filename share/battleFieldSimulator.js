@@ -14,16 +14,25 @@
 	this.size = Point.Point(3000,3000);
 	this.instructionQueue = [];
 	this.time = 0;
-	this.initTeamInfo();
+	this.initTeamInfo(); 
     }
     BattleFieldSimulator.prototype.initTeamInfo = function(){
 	this.teamInfo = {
 	    0:{
 		mine:2000
+		,tech:{}
+		,maxUnit:75
+		,unit:0
 	    },1:{
 		mine:2000
-
+		,tech:{}
+		,maxUnit:75
+		,unit:0
 	    }}
+	for(i=0;i<10;i++){
+	    this.teamInfo["0"].tech[i.toString()]=0;
+	    this.teamInfo["1"].tech[i.toString()]=0; 
+	}
     }
     BattleFieldSimulator.prototype.toData = function(){
 	var ships = [];
@@ -93,6 +102,7 @@
 	    unit.next();
 	}
 	if(unit.type == "mine"){
+	    unit.next();
 	    //console.log(unit.position.toString());
 	}
 	if(unit.type == "gate")return;
@@ -161,6 +171,9 @@
 	    self.emit("shipGain",ship,mine);
 	    
 	})
+	ship.on("targetDead",function(target){
+	    self.emit("shipTargetDead",ship,target); 
+	})
 	return ship;
     }
     BattleFieldSimulator.prototype.initShip = function(ship){
@@ -174,7 +187,7 @@
 	    console.trace();
 	    return;
 	}
-	
+	this.teamInfo[ship.team].unit-=1;
 	this.emit("shipIsDead",ship);
 	this.remove(ship);
 	ship.isDead = true; 
@@ -194,8 +207,9 @@
 	    console.trace();
 	    return;
 	}
+	
 	this.teamInfo[ship.team].mine += cmd.ammount;
-	this.emit("gained",ship,mine,cmd.ammount); 
+	this.emit("gained",ship,mine,cmd.ammount);
     }
     BattleFieldSimulator.prototype.shipMine = function(cmd){
 	var ship = this.getShipById(cmd.id);
@@ -313,22 +327,28 @@
 	if(instruction.count==0){
 	    this.addMotherShip();
 	    this.initTeamInfo();
+	    this.emit("start");
 	} 
     } 
     BattleFieldSimulator.prototype.makeShip = function(instruction){
 	var team = instruction.team;
 	var itemId = instruction.itemId;
 	var proto = Static.gameResourceManager.get(itemId);
+	if(this.teamInfo[team].unit>=this.teamInfo[team].maxUnit){
+	    this.emit("maxUnit",instruction);
+	    return;
+	}
 	if(!proto || !proto.consume){
 	    console.error("not this proto or consume");
 	}
-	var mine = proto.consume.mine;
+	var mine = proto.consume.mine*(+this.teamInfo[team].tech[itemId]+1);
 	if(this.teamInfo[team].mine>=mine){
 	    this.teamInfo[team].mine-=mine;
-	    this.emit("consume","mine",proto.consume.mine,team);
 	}else{
 	    return;
 	}
+	this.teamInfo[team].unit++;
+	this.emit("consume","mine",proto.consume.mine,team);
 	this.emit("makeShip",{
 	    team:team
 	    ,itemId:itemId
@@ -349,6 +369,60 @@
     }
     BattleFieldSimulator.prototype.end = function(instruction){
 	this.emit("end",instruction.lost);
+    }
+    BattleFieldSimulator.prototype.upgrade = function(instruction){
+	var itemId = instruction.itemId;
+	var team = instruction.team; 
+	var level = instruction.level;
+	if(this.teamInfo[team].tech[itemId]!=level-1){
+	    console.error("invalid upgrade of",level
+			  ,"from",this.teamInfo[team].tech[itemId]);
+	    return;
+	}
+	if(!this.teamInfo[team].tech[itemId+"_"])this.teamInfo[team].tech[itemId+"_"]={};
+	if(this.teamInfo[team].tech[itemId+"_"].hasUpgrade)return;
+	this.teamInfo[team].tech[itemId+"_"].hasUpgrade = true;
+	var proto = Static.gameResourceManager.get(itemId);
+	if(!proto){
+	    console.error("no this ship");
+	    console.trace();
+	    return null;
+	} 
+	var price = this.calculateUpgrade(itemId,level);
+	if(this.teamInfo[team].mine<price){
+	    console.error("not enough money upgrade",instruction);
+	    this.emit("errorUpgrade",instruction);
+	    return;
+	}
+	this.teamInfo[team].mine-=price;
+	this.emit("consume","mine",price,team);
+	this.emit("upgrade",team,itemId,level);
+    }
+    BattleFieldSimulator.prototype.calculateUpgrade = function(itemId,level){
+	var proto = Static.gameResourceManager.get(itemId);
+	if(!proto)
+	    return null;
+	return proto.consume.mine*12*level*level;
+    }
+    BattleFieldSimulator.prototype.doUpgrade = function(instruction){
+	var itemId = instruction.itemId;
+	var team = instruction.team;
+	var level = instruction.level;
+	
+	this.teamInfo[team].tech[itemId+"_"].hasUpgrade = false;
+	if(level!=this.teamInfo[team].tech[itemId]+1){
+	    return;
+	}
+	for(var i=0;i<this.parts.length;i++){
+	    var item = this.parts[i];
+	    if(item.type == "ship" 
+	       && item.itemId == itemId
+	       && item.team == team){
+		item.upgrade();
+	    }
+	}
+	this.teamInfo[team].tech[itemId]++;
+	this.emit("upgraded",team,itemId,this.teamInfo[team].tech[itemId]);
     }
     BattleFieldSimulator.prototype._excute = function(instruction){
 	switch(instruction.cmd){
@@ -385,6 +459,13 @@
 	case OperateEnum.END:
 	    this.end(instruction);
 	    break;
+	case OperateEnum.UPGRADE:
+	    this.upgrade(instruction)
+	    break;
+	case OperateEnum.DOUPGRADE:
+	    this.doUpgrade(instruction);
+	    break;
+	    
 	}
     }
     exports.BattleFieldSimulator = BattleFieldSimulator;

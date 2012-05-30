@@ -244,6 +244,18 @@
     }
     Instance.prototype.next = null;
     Key = {}
+    
+    Key["0"]=48;
+    
+    Key["1"]=49;
+    Key["2"]=50;
+    Key["3"]=51;
+    Key["4"]=52;
+    Key["5"]=53;
+    Key["6"]=54;
+    Key["7"]=55;
+    Key["8"]=56;
+    Key["9"]=57;
     Key.a=65;
     Key.b=66;
     Key.c=67;
@@ -278,6 +290,7 @@
     Key.up = 38;
     Key.right = 39;
     Key.down =40;
+    Key.enter = 13;
     var MathFunc = {};
     MathFunc.curve = function(a,b,c,x){
 	return a*x*x+b*x+c;

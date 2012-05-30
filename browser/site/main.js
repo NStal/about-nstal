@@ -15,12 +15,11 @@ API = function(){
 API.prototype = new APIManager();
 Static.HttpAPI = new API();
 Main = Class.sub();
-
 Static.settings = {
     height:800
     ,width:1280
     ,rate:30
-    ,host:"10.42.43.1"
+    ,host:"222.20.105.223"
     ,port:10000
 }
 Static.checkSize = function(){
@@ -55,9 +54,11 @@ Main.prototype.init = function(){
     Static.KEYS = [];
     window.onkeydown =function(e){
 	Static.KEYS[e.which] = true;
+	return true;
     }
     window.onkeyup = function(e){
 	Static.KEYS[e.which] = false;
+	return true;
     }
 	
 }

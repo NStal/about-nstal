@@ -7,6 +7,8 @@
 	,["frontier","image","image/frontier2.png",20,24]
 	,["miningShip","image","image/miningShip.png",22,32]
 	,["gardian","image","image/gardian.png",18,37]
+	,["engineerShipLight","image","image/engineerShipLight.png",100,100]
+	,["engineerShipHeavy","image","image/engineerShipHeavy.png",100,100] 
     ];
     exports.GameResource = Resource;
 })(exports)

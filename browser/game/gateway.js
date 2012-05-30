@@ -15,8 +15,15 @@
 	})
 	this.connector.on("close",function(){
 	    self.ready = false;
+	    console.error("掉线了:(");
+	    window.location.href = window.location.href;
 	})
+	
 	this.connector.on("message",function(msg){
+	    if(msg.cmd == OperateEnum.CHAT){
+		self.emit("chat",msg.username,msg.data);
+		return;
+	    }
 	    if(msg.cmd == OperateEnum.SYNC){
 		Static.battleField.time = msg.time;
 		Static.userteam = msg.team;

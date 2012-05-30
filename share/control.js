@@ -23,6 +23,11 @@ ShipControler.prototype.parseEvent = function(e){
     return e;
 }
 ShipControler.prototype.addSelectShip = function(ship){
+    if(!ship){
+	console.log("cant add ship of",ship)
+	console.trace();
+	return;
+    }
     Static.ships.push(ship);
     ship.isSelected = true;
 }
@@ -42,6 +47,15 @@ ShipControler.prototype.onMouseDown = function(e){
     this.onMouseMove(e);
     this.mouseDownPoint = this.eventToPoint(e);
     if(e.button == 0){
+	var now = Date.now();
+	if(this.lastLeftButtonDownDate){
+	    if(now - this.lastLeftButtonDownDate < 300){
+		Static.leftDoubleClick = true;
+		this.lastLeftButtonDownDate-=1000;
+		return;
+	    }
+	}
+	this.lastLeftButtonDownDate = now;
 	Static.leftButtonDown = true;
     }else{
 	Static.rightButtonDown = true;
@@ -83,12 +97,18 @@ ShipControler.prototype.remove = function(ship){
 ShipControler.prototype.next = function(){
     
     //console.log(this.lastLeftButtonDown,Static.leftButtonDown);
+    if(Static.leftDoubleClick){
+	this.onLeftDoubleClick();
+	Static.leftDoubleClick = false;
+	return;
+    }
     if(!this.lastLeftButtonDown&&Static.leftButtonDown){
 	this.isMove = false;
+	this.onLeftButtonDown();
     }
     if(this.lastLeftButtonDown&&!Static.leftButtonDown){
 	if(!this.isMove){
-	    this.onLeftClick();
+	    //this.onLeftClick();
 	} 
 	if(this.p1 && this.p2){
 	    p1 = Point.Point(this.p1);
@@ -118,7 +138,27 @@ ShipControler.prototype.next = function(){
     this.lastRightButtonDown = Static.rightButtonDown;
     this.lastIsMove = this.isMove;
 }
-ShipControler.prototype.onLeftClick = function(){
+ShipControler.prototype.onLeftDoubleClick = function(){
+    var p = Point.Point(Static.mousePosition);
+    this.clear();
+    Static.battleFieldDisplayer.screenToBattleField(p);
+    var ship = Static.battleFieldDisplayer.getShipByPosition(p);
+    if(!ship)return;
+    var itemId = ship.itemId;
+    var tempArr = Static.battleField.parts;
+    for(var i=0,length=tempArr.length;i < length;i++){
+	var item = tempArr[i];
+	if(item.itemId == itemId
+	   && item.team == Static.userteam
+	   && Static.battleFieldDisplayer.pointInScreen(item.cordinates)){
+	    this.addSelectShip(item);
+	}
+    }
+    if(ship){
+	this.addSelectShip(ship);
+    }
+}
+ShipControler.prototype.onLeftButtonDown = function(){
     var p = Point.Point(Static.mousePosition);
     this.clear();
     Static.battleFieldDisplayer.screenToBattleField(p);
@@ -200,15 +240,15 @@ ShipControler.prototype.getShipsByRect = function(p1,p2){
     for(var i=0;i < arr.length;i++){
 	var item = arr[i]; 
 	if(item.type=="ship"
-	   &&this.isShipInRect(item,p1,p2)
-	   &&Static.userteam == item.team){
+	   && Static.userteam == item.team
+	   && this.isShipInRect(item,p1,p2)){
 	    this.addSelectShip(item);
 	}
     }
 }
 ShipControler.prototype.isShipInRect = function(ship,p1,p2){
     var p = ship.cordinates;
-    return (p1.x-p.x)*(p2.x-p.x)<0 && (p1.y-p.y)*(p2.y-p.y)<0;
+    return (p1.x-p.x)*(p2.x-p.x)<=0 && (p1.y-p.y)*(p2.y-p.y)<=0;
 }
 var RightClickHint = Drawable.sub();
 RightClickHint.prototype._init = function(){

@@ -32,7 +32,10 @@
 	DAMAGE:13,//ship recieveDamage GOD
 	ABOUTREADY:14,
 	COUNTDOWN:15,
-	CREATE_SHIP:16
+	CREATE_SHIP:16,
+	UPGRADE:17,
+	DOUPGRADE:18,
+	CHAT:19
     }
     exports.OperateEnum = OperateEnum;
     //协议转换

@@ -15,7 +15,13 @@
 	    if(typeof this.destination.target!="object"){
 		this.attackAt(Static.battleField.getShipById(this.destination.target));
 	    }
+	    if(this.ship.subType == "repairShip"){
+		if(this.destination.target.life>=this.destination.maxLife){
+		    this.destination.target = null;
+		} 
+	    }
 	    if(this.destination.target.isDead){
+		this.ship.emit("targetDead",this.destination.target);
 		this.destination.target = null
 	    }else{
 		if(this.ship.fireReady
@@ -100,6 +106,10 @@
     }
     //how
     AI.prototype.attackAt = function(target){
+	if(this.ship.subType == "miningShip"){
+	    console.error("miningShip can't attack at");
+	    return;
+	}
 	this.destination.targetPoint = target.cordinates;
 	this.destination.target = target;
     }

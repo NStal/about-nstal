@@ -40,6 +40,29 @@
 	}
 	this.itemId = info.itemId;
 	if(info.life)this.life = info.life;
+	if(!this.upgradeRate){
+	    this.upgradeRate = 1.25;
+	}
+	var level = Static.battleField.teamInfo[this.team].tech[this.itemId];
+	for(var i=0;i<level;i++){
+	    this.upgrade();
+	}
+    }
+    Ship.prototype.upgrade = function(){
+	if(this.itemId!=0){
+	    this.maxLife *= this.upgradeRate;
+	    this.life *= this.upgradeRate;
+	}else{
+	    this.maxLife*=3;
+	    this.life*=3;
+	}
+	this.attack = Math.floor(this.attack*this.upgradeRate);
+	this.maxSpeed *= Math.floor(Math.sqrt(this.upgradeRate)*100)/100;
+	this.maxRotateSpeed *= Math.floor(Math.sqrt(Math.sqrt(this.upgradeRate))*100)/100;;
+	if(typeof this.minSpeed == "number"){
+	    this.minSpeed *= Math.floor(Math.sqrt(Math.sqrt(this.upgradeRate))*100)/100;
+	}
+	this.level++;
     }
     Ship.prototype.toData = function(){
 	var data ={
@@ -65,6 +88,9 @@
 	if(this.life<=0){
 	    this.life = 0;
 	    this.onDead();
+	}
+	if(this.life>this.maxLife){
+	    this.life = this.maxLife;
 	}
     }
     Ship.prototype.next = function(){

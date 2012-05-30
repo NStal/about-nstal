@@ -3,6 +3,10 @@
     var Static = require("./share/static").Static;
     var OperateEnum = require("./share/protocol").OperateEnum;
     Judger.prototype._init = function(){
+	this.cmdBuffer = {
+	    "DAMAGE":[]
+	}; 
+	var self = this;
 	Static.battleField.on("shipDead",function(ship,byWho){
 	    Static.gateway.boardCast({
 		cmd:OperateEnum.DEAD
@@ -15,25 +19,28 @@
 		})
 	    }
 	});
-	Static.battleField.on("shipFire",function(ship,target){
+	Static.battleField.on("upgrade",function(team,itemId,level){
 	    Static.gateway.boardCast({
-		cmd:OperateEnum.FIRE
-		,id:ship.id
-		,targetId:target.id
+		cmd:OperateEnum.DOUPGRADE
+		,team:team
+		,itemId:itemId
+		,level:level
 	    })
-	    Static.gateway.boardCast({
-		cmd:OperateEnum.DAMAGE
-		,id:target.id
+	})
+	Static.battleField.on("shipFire",function(ship,target){
+	    self.buffer("DAMAGE",{
+		id:target.id
 		,damage:ship.attack
 	    })
 	});
 	Static.battleField.on("shipGain",function(ship,mine){
-	    console.log("judger give",mine.size);
+	    var ammount = mine.gainByShip(ship);
+	    console.log("judger give",ammount);
 	    Static.gateway.boardCast({
 		cmd:OperateEnum.GAIN
 		,id:ship.id
 		,targetId:mine.id
-		,ammount:mine.size
+		,ammount:ammount
 	    });
 	})
 	Static.battleField.on("end",function(){
@@ -76,6 +83,51 @@
 		count--;
 	    },1000);
 	});
+    }
+    Judger.prototype.buffer = function(type,info){
+	this.cmdBuffer[type].push(info); 
+    }
+    Judger.prototype.next = function(){
+	/*//FIRE
+	var results = {};
+	var arr = this.cmdBuffer["FIRE"];
+	for(var i=0;i<arr.length;i++){
+	    var item = arr[i];
+	    if(!results[item.targetId]){
+		results[item.targetId] = [item.id];
+	    }else{
+		results[item.targetId].push(item.id);
+	    }
+	} 
+	for(var item in results){
+	    Static.gateway.boardCast({
+		cmd:OperateEnum.FIRE
+		,id:results[item]
+		,targetId:item
+	    })
+	}
+	this.cmdBuffer["FIRE"].length = 0;
+	*/
+	
+	var results = {};
+	var arr = this.cmdBuffer["DAMAGE"];
+	for(var i=0;i<arr.length;i++){
+	    var item = arr[i];
+	    if(!results[item.id]){
+		results[item.id] = item.damage;
+	    }else{
+		results[item.id] +=item.damage;
+	    }
+	} 
+	for(var item in results){
+	    Static.gateway.boardCast({
+		cmd:OperateEnum.DAMAGE
+		,id:item
+		,damage:results[item]
+	    })
+	}
+	
+	this.cmdBuffer["DAMAGE"].length = 0;
     }
     exports.Judger = Judger;
 })(exports)
