@@ -47,13 +47,17 @@
 	    Static.battleField.initialize([],Static.battleField.map);
 	    Static.battleField.initTeamInfo();
 	});
+	var howMany = 0;
 	Static.battleField.on("makeShip",function(info){
 	    var id = Math.floor((Math.random()*1000000)).toString();
+	    howMany++;
+	    console.log("judge",howMany,id);
 	    Static.gateway.boardCast({
 		cmd:OperateEnum.CREATE_SHIP
 		,id:id
 		,team:info.team
 		,itemId:info.itemId
+		,which:howMany
 	    });
 	})
 	Static.battleField.on("shipBuilt",function(ship){

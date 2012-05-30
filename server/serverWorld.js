@@ -32,7 +32,8 @@
     ServerWorld.prototype.next = function(){
 	ServerWorld.parent.prototype.next.call(this);
 	Static.battleField.next(); 
-	Static.judger.next();
+	Static.judger.next(); 
+	//Static.gateway.next();
     }
     exports.ServerWorld = ServerWorld;
 })(exports)

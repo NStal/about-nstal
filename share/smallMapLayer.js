@@ -28,9 +28,14 @@ SmallMapLayer.prototype.onDraw = function(context){
     context.stroke();
     for(var i=0;i<this.ships.length;i++){
         item = this.ships[i];
+	var size = 1;
         if(item.type == "ship"){
+	    if(item.subType == "motherShip"){
+		size = 3;
+	    }
             context.beginPath();
-            context.arc(item.cordinates.x/this._scale,item.cordinates.y/this._scale,item.size/this._scale,0,2*Math.PI,false);
+	    context.rect(item.cordinates.x/this._scale,item.cordinates.y/this._scale,size,size);
+            //context.arc(item.cordinates.x/this._scale,item.cordinates.y/this._scale,item.size/this._scale,0,2*Math.PI,false);
             if(item.team == Static.userteam){
                 context.fillStyle = "green";
             }else{

@@ -12,6 +12,8 @@
 	    Static.team = {};
 	})
 	this.delay = 5;
+	this.index = 0;
+	this.boardCastBuffer =[];
     }
     ServerGateway.prototype.onConnect = function(worker){
 	console.log("connection");
@@ -31,10 +33,37 @@
 	    console.log("lost connection");
 	})
 	worker.on("message",function(msg){
-	    console.log("msg",msg);
+	    //console.log("msg",msg);
 	    self.onMessage(msg,worker);
 	}) 
 	this.add(worker);
+    }
+    ServerGateway.prototype.next = function(){
+	this.index++;
+	if(this.index==3){
+	    this.index=0;
+	    this._boardCast();
+	}
+    }
+    ServerGateway.prototype._boardCast = function(){
+	if(this.boardCastBuffer.length>0){
+	    console.log("ready to send",this.boardCastBuffer);
+	}
+	for(var i=0;i<this.boardCastBuffer.length;i++){
+	    
+	    var item = this.boardCastBuffer[i];
+	    item.time = Static.battleField.time+this.delay;
+	    //console.log("board cast",item);
+	    for(var i=0;i<this.parts.length;i++){
+		var worker = this.parts[i];
+		worker.send(item);
+	    } 
+	    Static.battleField.addInstruction(item);
+	    if(item.which){
+		console.log("bcd",item);
+	    }
+	} 
+	this.boardCastBuffer.length = 0;
     }
     ServerGateway.prototype.boardCast = function(msg){
 	msg.time = Static.battleField.time+this.delay;

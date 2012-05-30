@@ -19,12 +19,12 @@
     BattleFieldSimulator.prototype.initTeamInfo = function(){
 	this.teamInfo = {
 	    0:{
-		mine:2000
+		mine:2000000
 		,tech:{}
 		,maxUnit:75
 		,unit:0
 	    },1:{
-		mine:2000
+		mine:2000000
 		,tech:{}
 		,maxUnit:75
 		,unit:0
@@ -330,7 +330,10 @@
 	    this.emit("start");
 	} 
     } 
+    var howMany = 0;
     BattleFieldSimulator.prototype.makeShip = function(instruction){
+	howMany++;
+	console.log("make",howMany);
 	var team = instruction.team;
 	var itemId = instruction.itemId;
 	var proto = Static.gameResourceManager.get(itemId);
@@ -354,7 +357,10 @@
 	    ,itemId:itemId
 	})
     };
+    var _howMany = 0;
     BattleFieldSimulator.prototype.createShip = function(instruction){
+	_howMany++;
+	console.log("create",_howMany);
 	var team = instruction.team;
 	var motherShip = this.getShipById(team);
 	if(!motherShip)return;
@@ -364,6 +370,7 @@
 	    ,cordinates:motherShip.cordinates
 	    ,team:team
 	}
+	console.log("really",_howMany,info.id);
 	var ship = this.initShip(info);
 	this.emit("shipBuilt",ship);
     }

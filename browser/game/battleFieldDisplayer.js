@@ -1,7 +1,7 @@
 var BattleFieldDisplayer = Drawable.sub();
 BattleFieldDisplayer.prototype._init = function(bfs){
     this.viewPort = Point.Point(this.position);
-    this.battleFieldSimulator = bfs; 
+    this.battleFieldSimulator = bfs;
     //so we can call this.draw(context);
     this.parts = this.battleFieldSimulator.parts;
     var self = this;
@@ -11,13 +11,6 @@ BattleFieldDisplayer.prototype._init = function(bfs){
 	for(var i=0,length=tempArr.length;i < length;i++){
 	    var item = tempArr[i];
 	    self.decorateShip(item);
-	}
-    })
-    this.battleFieldSimulator.on("mineInitialized",function(mines){
-	var tempArr = mines;
-	for(var i=0,length=tempArr.length;i < length;i++){
-	    var item = tempArr[i];
-	    self.decorateMine(item);
 	}
     })
     this.battleFieldSimulator.on("shipInitialized",function(ships){
@@ -35,7 +28,7 @@ BattleFieldDisplayer.prototype.initShip = function(shipInfo){
 }
 BattleFieldDisplayer.prototype.onDraw = function(context){
     if(!this.grid){
-	var img = Static.resourceLoader.get("grid"); 
+	var img = Static.resourceLoader.get("grid");
 	
 	if(img){
 	    this.grid = context.createPattern(img,"repeat");
@@ -49,68 +42,6 @@ BattleFieldDisplayer.prototype.onDraw = function(context){
     }
 }
 BattleFieldDisplayer.prototype.decorateShip =function(ship){
-    var self = this;
-    ship.onDraw = function(context){
-	if(!self.pointInScreen(this.position,this.size))return;
-	context.beginPath();
-	var size = this.size; 
-	if(!this.shake){
-	    this.shake = new Shake({
-		time:120+10*Math.random()
-		,range:5
-		,angle:90
-	    });
-	    this.shake.index+=Math.random()*100;
-	    this.effects = [this.shake];
-	}
-	if(this.img){
-	    context.save();
-	    context.globalAlpha = 0.9;
-	    context.shadowBlur = 3;
-	    context.rotate(Math.PI/2); 
-	    context.drawImage(this.img,-this.img.width/2,-this.img.height/2,this.img.width,this.img.height);
-	    context.restore();
-	}else{
-	    this.img = Static.resourceLoader.get(this.src);
-	    context.moveTo(-size/2,-size/3);
-	    context.lineTo(size/2,0);
-	    context.lineTo(-size/2,size/3);
-	    context.closePath();
-	    context.fillStyle = "black";
-	    context.fill();
-	}
-	if(this.index){
-	    this.index++;
-	}
-	else{
-	    this.index=1;
-	}
-	//draw life
-	context.save();
-	context.rotate(-this.rotation); 
-	context.beginPath();
-	context.arc(0,0,this.size,0,Math.PI*2*this.life/this.maxLife);
-	if(this.team == Static.userteam)
-	    context.strokeStyle = "green";
-	else
-	    context.strokeStyle = "red";
-	context.stroke();
-	context.rotate(this.index/5);
-	context.globalAlpha = (Math.sin(this.index/5)+2)/3;
-	
-	if(this.isSelected){
-	    //draw selection
-	    context.beginPath();
-	    context.arc(0,0,this.size+8,0,Math.PI*2-1);
-	    context.strokeStyle = "#0bf";
-	    context.stroke(); 
-	    context.rotate(-this.index/2); 
-	    context.beginPath();
-	    context.arc(0,0,this.size+4,0,Math.PI*2-1);
-	    context.stroke();
-	} 
-	context.restore();
-    }
     ship.moveTo = function(position){
 	var cmd = ProtocalGenerater.moveTo(this.id
 					   ,position.x
@@ -119,43 +50,29 @@ BattleFieldDisplayer.prototype.decorateShip =function(ship){
     }
 }
 BattleFieldDisplayer.prototype.decorateMine = function(mine){
-    mine.lineColor = "#009cff";
-    mine.fillColor = "#00b4ff";
-    var self = this;
-    mine.onDraw = function(context){
-	if(!self.pointInScreen(this.position,this.size))return;
-	context.beginPath();
-	
-	context.arc(0,0,this.size,0,Math.PI*2);
-	context.globalAlpha = 1;
-	context.strokeStyle = this.lineColor;
-	context.stroke();
-	context.globalAlpha = 0.12;
-	context.shadowBlur = 5;
-	context.shadowColor = this.fillColor;
-	context.fillStyle = this.fillColor;
-	context.fill();
-    }
+    
 }
+
 BattleFieldDisplayer.prototype.next = function(){
+    
+    var padding = Static.settings.width/10
     this.graduallyMove();
     this.battleFieldSimulator.next();
-    var padding = 150;
     var width = Static.settings.width;
     var height = Static.settings.height;
     var move = Point.Point(0,0);
     if(Static.mousePosition){
 	if(Static.mousePosition.x>width-padding){
-	    move.x = -40;
+	    move.x = -30;
 	}
 	if(Static.mousePosition.x<padding){
-	    move.x = 40;
+	    move.x = 30;
 	} 
 	if(Static.mousePosition.y>height-padding){
-	    move.y = -40;
+	    move.y = -30;
 	}
 	if(Static.mousePosition.y<padding){
-	    move.y = 40;
+	    move.y = 30;
 	}
 	this.moveViewPort(move);
 	move.release();
@@ -173,7 +90,6 @@ BattleFieldDisplayer.prototype.setViewPortTo = function(p){
     this.viewPort.y = -p.y+settings.height/2;
 }
 BattleFieldDisplayer.prototype.graduallyMove = function(){
-    
     var settings = Static.settings;
     var min = 5;
     var targetX = this.viewPort.x;

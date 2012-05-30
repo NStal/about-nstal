@@ -17,7 +17,22 @@
 	this.speed = Math.floor(this.size/20);
 	this.mine = 0;
 	this.cordinates = this.position;
+	this.lineColor = "#009cff";
+	this.fillColor = "#00b4ff";
     } 
+    Mine.prototype.onDraw = function(context){
+	if(!Static.battleFieldDisplayer.pointInScreen(this.position,this.size))return;
+	context.beginPath(); 
+	context.arc(0,0,this.size,0,Math.PI*2);
+	context.globalAlpha = 1;
+	context.strokeStyle = this.lineColor;
+	context.stroke();
+	context.globalAlpha = 0.12;
+	context.shadowBlur = 5;
+	context.shadowColor = this.fillColor;
+	context.fillStyle = this.fillColor;
+	context.fill();
+    }
     Mine.prototype.next = function(){
 	this.mine+=this.speed;
 	if(this.mine>this.maxMine){

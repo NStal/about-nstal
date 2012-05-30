@@ -64,6 +64,61 @@
 	}
 	this.level++;
     }
+    Ship.prototype.onDraw = function(context){
+	if(!Static.battleFieldDisplayer.pointInScreen(this.position,this.size))return;
+	context.beginPath();
+	var size = this.size;
+	if(!this.shake){
+	    this.shake = new Shake({
+		time:120+10*Math.random()
+		,range:5
+		,angle:90
+	    });
+	    this.shake.index+=Math.random()*100;
+	    this.effects = [this.shake];
+	}
+	if(this.img){
+	    context.save();
+	    context.rotate(Math.PI/2); 
+	    context.drawImage(this.img,-this.img.width/2,-this.img.height/2,this.img.width,this.img.height);
+	    context.restore();
+	}else{
+	    this.img = Static.resourceLoader.get(this.src);
+	    context.moveTo(-size/2,-size/3);
+	    context.lineTo(size/2,0);
+	    context.lineTo(-size/2,size/3);
+	    context.closePath();
+	    context.fillStyle = "black";
+	    context.fill();
+	}
+	if(this.index){
+	    this.index++;
+	}
+	else{
+	    this.index=1;
+	}
+	//draw life
+	context.save();
+	context.rotate(-this.rotation); 
+	context.beginPath();
+	context.arc(0,0,this.size,0,Math.PI*2*this.life/this.maxLife);
+	if(this.team == Static.userteam)
+	    context.strokeStyle = "green";
+	else
+	    context.strokeStyle = "red";
+	context.stroke();
+	if(this.isSelected){
+	    //context.beginPath();
+	    //context.arc(0,0,this.size+8,this.index/3,Math.PI*2-1+this.index/3);
+	    //
+	    //context.stroke();
+	    context.beginPath();
+	    context.strokeStyle = "#0bf";
+	    context.arc(0,0,this.size+4,-this.index/2,Math.PI*2-1-this.index/2);
+	    context.stroke();
+	} 
+	context.restore(); 
+    }
     Ship.prototype.toData = function(){
 	var data ={
 	    id:this.id

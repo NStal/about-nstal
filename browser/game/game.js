@@ -18,8 +18,8 @@ Game.prototype._init = function(canvas){
     Static.gateway = new Gateway();
     Static.gateway.connect();
     Static.gateway.on("open",function(){
-	Static.gateway.send({cmd:OperateEnum.SYNC
-			     ,username:Static.username});
+	Static.gateway.connector.send({cmd:OperateEnum.SYNC
+				       ,username:Static.username});
 	RunTest();
     }) 
     Static.interactionManager = new InteractionManager();
@@ -35,11 +35,11 @@ Game.prototype.next = function(){
 		      ,Static.settings.height);
     Static.battleFieldDisplayer.next();
     Static.battleFieldDisplayer.draw(context);
-    Static.selectRect.draw(context);
     Static.shipController.next();
     Static.shipController.onDraw(context);
     Static.interactionManager.draw(context);
     Static.smallMap.draw(context);
+    //Static.gateway.next();
     this.solveKeyEvent();
     //console.log(Static.battleField.time);
 }
