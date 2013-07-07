@@ -116,7 +116,7 @@
 	    context.strokeStyle = "#0bf";
 	    context.arc(0,0,this.size+4,-this.index/2,Math.PI*2-1-this.index/2);
 	    context.stroke();
-	} 
+	}
 	context.restore(); 
     }
     Ship.prototype.toData = function(){

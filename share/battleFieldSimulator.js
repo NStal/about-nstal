@@ -19,12 +19,12 @@
     BattleFieldSimulator.prototype.initTeamInfo = function(){
 	this.teamInfo = {
 	    0:{
-		mine:2000000
+		mine:2000
 		,tech:{}
 		,maxUnit:75
 		,unit:0
 	    },1:{
-		mine:2000000
+		mine:2000
 		,tech:{}
 		,maxUnit:75
 		,unit:0
